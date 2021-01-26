@@ -1,8 +1,6 @@
 # 前端进阶修炼
 
-![](https://img.shields.io/github/stars/Wangbaoqi/frontAdvance?affiliations=OWNER&style=social)
-
-
+![GitHub User&apos;s stars](https://img.shields.io/github/stars/Wangbaoqi/frontAdvance?affiliations=OWNER&style=social)
 
 ![](.gitbook/assets/logo.gif)
 
