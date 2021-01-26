@@ -1,12 +1,10 @@
----
-description: "\U0001F596Personal technology blog, Absorbed FrontEnd，Node . \U0001F199"
----
-
 # 前端进阶修炼
 
-
-
 ![](.gitbook/assets/logo.gif)
+
+这里是Nate前端进阶修炼得主战场，对前端进行重新学习和整理，建立自己完整的知识体系，将杂乱的知识通过方法论（整理法和追溯法）规整到对应的体系中。
+
+建立自己的一套前端技术知识脑图，对不了解、不懂的知识进行查漏补缺。
 
 
 
