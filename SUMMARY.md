@@ -2,9 +2,10 @@
 
 * [前端进阶修炼](README.md)
 
-## HTML、超文本标记语言 <a id="html-1"></a>
+## HTML、超文本标记语言 <a id="html"></a>
 
-* [Standard 系列 - 编写HTML文档](html-1/untitled.md)
+* [standard 系列 - 编写HTML文档](html/edit-html.md)
+* [standard 系列 - 解析HTML文档](html/parse-html.md)
 
 ## CSS、层叠样式表 <a id="css"></a>
 
