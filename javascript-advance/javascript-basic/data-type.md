@@ -26,7 +26,7 @@ typeof "10"; // "string"
 typeof {}; // "object"
 typeof function(){}; // "function"
 typeof [1,3]; // "object"
-typeof new Symbol(); // ”symbol“
+typeof Symbol(); // ”symbol“
 ```
 
 **因此使用typeof并不能准确的判断所有的类型**
@@ -69,7 +69,7 @@ str instanceof String; // true
 
 使用构造函数来判断
 
-::: danger null和undefined在判断的时候会报错, 这种方法知道就好，不建议使用 :::
+null和undefined在判断的时候会报错, 这种方法知道就好，不建议使用
 
 ```javascript
 let obj = {};
@@ -116,14 +116,14 @@ JS类型转换的情况大致有三种： 1. 转换成boolean 2. 转换成string
 | :--- | :---: | :--- |
 | number | boolean | 0, -0, NaN为false， 其他为true |
 | string | boolean | '' =&gt; false |
-| undefined,null | boolean | false |
+| undefined, null | boolean | false |
 | 引用类型 | boolean | true |
 | number | string | 2 =&gt; '2' |
-| boolean,function,symbol | string | true =&gt; 'true' |
+| boolean, function, symbol | string | true =&gt; 'true' |
 | array | string | \[\] =&gt; '' \[1,3\] =&gt; "1,3" |
 | object | string | {} =&gt; "\[object object\]" |
 | string | number | '' =&gt; 0 '2' =&gt; 2 |
-| array | number | \[\] =&gt; 0 \[1\] =&gt; 1 \[1,2\] =&gt; NaN |
+| array | number | \[\] =&gt; 0   \[1\] =&gt; 1  \[1,2\] =&gt; NaN |
 | null | number | 0 |
 | 除了数组的引用类型 | number | NaN |
 | symbol | number | 报错 |
