@@ -122,11 +122,65 @@ for (const key in obj) {
 
 除了  `for in`  可以遍历对象，`for of`  也是可以遍历对象的，不过要实现迭代器   `@@iterator`   接口，有关迭代器可以转入「[**JavaScript进阶  迭代器与生成器**](../javascript-jin-jie/generator.md)」，对象可以通过增加属性 `[Symbol.iterator]`  来实现迭代器接口。
 
+要实现`@@iterator`首先要知道该接口是怎么执行的以及返回数据类型
+
 ```javascript
-// 要实现@@iterator首先要知道该接口是怎么执行的以及返回数据类型
+Array.prototype[Symbol.iterator]; // ƒ values() { [native code] }
+```
 
-Array.prototype[Symbol.iterator]; //
+可以看到 Array是实现了迭代器接口的，而它是返回了一个**Function**
 
+```javascript
+Array.prototype[Symbol.iterator](); // Array Iterator {}
+```
+
+执行这个函数，会返回一个对象，这个对象有个`next`方法
+
+```javascript
+Array.prototype[Symbol.iterator]().next(); // {value: undefined, done: true}
+```
+
+手动执行next方法 返回结果对象 当前遍历的值以及是否还需要遍历的标识。
+
+知道了迭代器接口 实现对象迭代器接口就方便多了
+
+```javascript
+// 对象实现迭代器接口
+Object.definedProperty(obj, Symbol.iterator, {
+   writable: true,
+   configurable: true,
+   enumerabale: true,
+   [Symbol.iterator]: function() {
+      let self = this;
+      let idx = 0; // 手动调next时的指针
+      let keys = Object.keys(self); // 
+      return {
+         next() {
+            return {
+               value: self[keys[idx++]],
+               done: idx > keys.length
+            }
+         }
+      }
+   }
+)
+
+// 两种遍历方式
+// 1. 使用for of
+for(let iter of obj) {
+   console.log(iter)
+}
+// 2. 手动调用next
+const iter = obj[Symbol.iterator]();
+iter.next()
+iter.next()
+iter.next()
+```
+
+除了手动实现迭代器接口来遍历对象之外，Object 构造函数提供原生的方法，`Object.keys`、`Object.values`和 `Object.entries`
+
+```javascript
+Object.keys(obj); // 
 ```
 
 ### 
