@@ -22,7 +22,7 @@ document.body.addEventListener('click', function() {
 如何实现发布-订阅模式
 
 * 指定发布者 
-* 给发布者添加缓存列表，存放回调函数一遍通知订阅者
+* 给发布者添加缓存列表，存放回调函数以便通知订阅者
 * 发布消息时，遍历缓存列表，触发订阅者的回调函数
 
 实现一个简单的售楼处的例子
@@ -45,7 +45,7 @@ saleOffices.trigger = function() {
 }
 // 测试 添加订阅者
 saleOffices.listen(function(price) {
-  console.log(+price)
+  console.log(++price)
 })
 saleOffices.listen(function(price) {
   console.log('first person sub msg'+price)
@@ -138,7 +138,7 @@ var observer = {
 
 ### 小结
 
-发布-订阅模式的使用非常广泛，可以用在异步编程中，也可以帮助完成松耦合的代码编写。 在架构方面来看，无论[MVC](/frame/mind/mvvm.html#mvc架构模式)、[MVP](/frame/mind/mvvm.html#mvp模式架构)和[MVVM](/frame/mind/mvvm.html#mvvm架构模式)中，都会有观察者模式的参与
+发布-订阅模式的使用非常广泛，可以用在异步编程中，也可以帮助完成松耦合的代码编写。 在架构方面来看，无论MVC、MVP和MVVM中，都会有观察者模式的参与
 
 发布-订阅模式的优点：
 
