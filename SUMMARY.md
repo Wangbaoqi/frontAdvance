@@ -81,6 +81,10 @@
 ## INTERVIEW、收集 <a id="interview-collect"></a>
 
 * [Html、CSS](interview-collect/html-css.md)
-* [JavaScript](interview-collect/javascript.md)
+* [JavaScript](interview-collect/javascript/README.md)
+  * [谈谈提升](interview-collect/javascript/tan-tan-ti-sheng.md)
+  * [谈谈apply、call、bind](interview-collect/javascript/tan-tan-applycallbind.md)
+  * [谈谈数组去重](interview-collect/javascript/tan-tan-shu-zu-qu-zhong.md)
+  * [谈谈深浅拷贝](interview-collect/javascript/tan-tan-shen-qian-kao-bei.md)
 * [浏览器](interview-collect/liu-lan-qi.md)
 
