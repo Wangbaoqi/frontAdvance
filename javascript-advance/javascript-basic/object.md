@@ -180,7 +180,9 @@ iter.next()
 除了手动实现迭代器接口来遍历对象之外，Object 构造函数提供原生的方法，`Object.keys`、`Object.values`和 `Object.entries`
 
 ```javascript
-Object.keys(obj); // 
+Object.keys(obj); // ["a", "b", "c", "d", "e"]
+Object.values(obj): // [0, "1", Array(3), ƒ, Symbol(3)]
+Object.entries(obj); // [['a', 0], ['b', '1'], ...]
 ```
 
 ### 
