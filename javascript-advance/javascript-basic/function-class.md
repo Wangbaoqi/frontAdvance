@@ -131,6 +131,30 @@ foo(10, 29); // 10 10
 
 可以看到，在参数存在的情况下，**`arguments`** 是可以修改参数值，但是无法修改不存在的参数。
 
+在箭头函数中，是不能使用 arguments 的，不过ES6中有扩展运算符可以将参数转换为数组的形式，也是方便传参的一种形式
+
+在箭头函数中，是不能使用 arguments 的，不过ES6中有扩展运算符可以将参数转换为数组的形式，也是方便传参的一种形式
+
+```javascript
+const foo = (...list) => {
+  // list 是数组
+  return list.reduce((pre, cur, idx, arr) => {
+    return pre + cur
+  }, 0)
+}
+foo(1,2,3,4,5) // 15
+```
+
+```javascript
+const foo = (...list) => {
+  // list 是数组
+  return list.reduce((pre, cur, idx, arr) => {
+    return pre + cur
+  }, 0)
+}
+foo(1,2,3,4,5) // 15
+```
+
 在一些场景下，可能需要**默认参数**来让代码更优美，但是要注意以下两点 
 
 1. 默认参数的作用域  -  默认参数的赋值操作是在函数调用的时候执行的，其赋值的顺序跟 **`let`** 声明的顺序是一致的
