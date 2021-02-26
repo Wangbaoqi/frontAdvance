@@ -171,7 +171,72 @@ function foo1(name = anthor, anthor = 'bao') {
 foo1(); // Referewance Error
 ```
 
- 
+###  函数尾调用
+
+函数尾调用是函数执行的**最后一步\(不一定是函数尾部\)**调用了函数
+
+```javascript
+function foo5() {
+  // 尾调用
+  return foo6();
+}
+function foo6() {
+  return 'tail chain'
+}
+
+function foo5() {
+  // 尾调用
+  if(s > 2) {
+    return foo6()
+  }
+  // 尾调用
+  return foo6();
+}
+
+
+// 以下不是尾调用
+function foo5() {
+  return foo6() + 2
+}
+function foo5() {
+  let res = foo6()
+  return res
+}
+```
+
+### 尾调用优化
+
+由于尾调用特殊的位置，当执行尾调用函数时，此时当前函数已经执行完毕了，因此在调用栈中没有必要存在该函数的执行上文了，可以从调用栈中弹出。节省内存空间，这也就是 `尾调用优化`   。
+
+### 尾递归
+
+尾递归在函数的执行的最后一步调用的是自身。可以想到，如果进行了尾调用优化，将节省多少的内存空间。注意：递归调用容易抛出 `栈溢出` 异常。
+
+看一下阶乘函数
+
+```javascript
+function factorial(n) {
+  if(n == 1) {
+    return n
+  }
+  return n * factorial(n - 1)
+}
+```
+
+上述计算阶乘的函数不是属于尾递归，这样存在的问题 - 如果 `n` 的量级很大，很有可能出现内存消耗过多，导致 `栈溢出`
+
+#### 优化成尾递归调用
+
+```javascript
+// 尾递归调用
+function factorialT(n, total) {
+  if(n == 1) return total;
+  return factorialT(n - 1, n * total)
+}
+factorialT(2, 1)
+```
+
+所以，在递归中使用尾调用还是很有必要的。在 ES6 中，使用尾递归优化，就不发生 `栈溢出`
 
 ### Class 类
 
