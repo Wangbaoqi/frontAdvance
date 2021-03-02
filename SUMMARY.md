@@ -69,6 +69,11 @@
 
 * [node - EventLoop](node-fu-wu-duan-shi-xian/node-eventloop.md)
 
+## SOURCE CODE、源码
+
+* [JavaScript API](source-code-yuan-ma/javascript-api/README.md)
+  * [Promise 实现](source-code-yuan-ma/javascript-api/promise-shi-xian.md)
+
 ## TOOL CHAIN、工具链
 
 * [静态类型检查](tool-chain-gong-ju-lian/jing-tai-lei-xing-jian-cha.md)
