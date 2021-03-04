@@ -146,7 +146,48 @@ console.log('pp1 foo() excute');
 
 #### 期约取消
 
+ES6 规定，期约是具有“激进型”的特性，一旦开始，不会取消，直到状态终止。但是第三方期约库像 [bluebird](http://bluebirdjs.com/docs/api/cancellation.html) 是实现了期约取消的。
 
+不过可以模拟一下
+
+```javascript
+class CancelToken {
+  constructor(cancelFn) {
+    this.promise = new Promise((resolve, reject) => {
+      cancelFn(() => {
+        resolve('cancel delay')
+      })
+    })
+  }
+}
+
+function cancelDelayResolve(delay) {
+  setTimeout(console.log, 0, 'set delay')
+
+  return new Promise((resolve, reject) => {
+    const id = setInterval((() => {
+      setTimeout(console.log, 0, 'delayed resolved')
+      fetchHttp('../mock/index.json')
+        .then(res => {
+          resolve(res)
+          console.log(res, 'fetch res');
+        })
+    }), delay);
+
+    const cancelToken = new CancelToken((cancelCb) => {
+      // 取消异步
+      btnCancel.addEventListener('click', cancelCb)
+    })
+    cancelToken.promise.then((res) => {
+      console.log(res);
+      // 清除定时器
+      clearInterval(id);
+    })
+  })
+}
+// 异步开始
+btnStart.addEventListener('click', () => cancelDelayResolve(1000))
+```
 
 
 
