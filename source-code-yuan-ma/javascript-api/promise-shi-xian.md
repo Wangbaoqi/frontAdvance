@@ -43,9 +43,9 @@ function PromiseN(excutor) {
   this.value = null;
   // 已拒绝原因
   this.reason = null;
-  // onFulFilled 和 onRejected 用来保存 then 中的回调
-  this.onFulFilled = [];
-  this.onRejected = [];
+  // resolvedCallbacks 和 rejectedCallbacks 用来保存 then 中的回调
+  this.resolvedCallbacks = [];
+  this.rejectedCallbacks = [];
   
   // 初始化 resolve 和 reject 函数
   // ...
@@ -63,8 +63,8 @@ function PromiseN(excutor) {
 * **status**： 初始化当前状态 - 待定
 * **value**：初始化已解决状态的值 - 默认为null
 * **reason**： 初始化已拒绝状态的值 - 默认为null
-* **onFulFilled**： 用来保存then中已解决状态的回调
-* **onRejected**： 用来保存then中已拒绝状态的回调
+* **resolvedCallbacks**： 用来保存then中已解决状态的回调
+* **rejectedCallbacks**： 用来保存then中已拒绝状态的回调
 
 之后执行**执行器函数，**传递 **resolve** 和 **reject** 函数用来异步调用，这里注意一点，**执行器函数中的同步代码是首先执行的**。接下来实现 **resolve** 和 **reject** 函数。
 
@@ -74,7 +74,7 @@ function resolve(val) {
   if(self.status === PENDING) {
     self.status = FULFILLED;
     self.value = val;
-    self.onFulFilled.map(fn => fn());
+    self.resolvedCallbacks.map(fn => fn());
   }
 }
 // 状态落地为已拒绝函数
@@ -82,7 +82,7 @@ function reject(reason) {
   if(self.status === PENDING) {
     self.status = REJECTED;
     self.reason = reason;
-    self.onRejected.map(fn => fn());
+    self.rejectedCallbacks.map(fn => fn());
   }
 }
 ```
@@ -109,5 +109,114 @@ const promise = new Promise((resolve, reject) => {
 
 ### Promise then
 
+promise 必须提供一个 `then` 方法来访问当前值，或最终值以及已拒绝的理由
 
+```javascript
+// 伪代码
+function then(onFulfilled, onRejected) {
+  const that = this;
+  onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : value => value;
+  onRejected = typeof onRejected === 'function' ? 
+                                     onRejected : 
+                                     reason => { throw reason};
+  
+  const promise = new PromiseN((resolve, reject) => {
+     // 处理不同的状态
+     // 处理当前状态是待定
+     if(that.status === PENDING) {
+       that.resolvedCallbacks.push(onFulfilled);
+       that.rejectedCallbacks.push(onRejected);
+     }
+     // 处理当前状态是已解决
+     if(that.status === FULFILLED) {
+       that.resolvedCallbacks.push(onFulfilled);
+     }
+     // 处理当前状态是已拒绝
+     if(that.status === REJECTED) {
+       that.rejectedCallback.push(onRejected)
+     }
+  })
+  return promise;
+}
+```
+
+从上述 `then` 的伪代码框架来看， `then` 函数接受两个参数，返回了一个新的**promise**对象。
+
+根据 [Promise/A+ 2.2](https://promisesaplus.com/) 规范，`then` 接收的参数除了 `function` 类型 之外不管是什么类型，都会转换成函数类型。
+
+```javascript
+// 参数非函数 默认转换为函数是为了透传参数
+Promise.Resovle('default params of function').then().then((val) => { console.log(val) })
+```
+
+上述伪代码大概展示了 then 方法的框架，接下来根据规范来剖析其细节。
+
+根据上述伪代码，将 `then` 方法完整实现一遍
+
+```javascript
+PromiseN.prototype.then = function(onFulfilled, onRejected) {
+  const that = this;
+  onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : value => value;
+  onRejected = typeof onRejected === 'function' ? 
+                                     onRejected : reason => {
+                                                    throw reason;
+                                                  }
+  
+  const promise = new PromiseN((resolve, reject) => {
+    // 状态为已解决
+    if(that.status === FULFILLED) {
+      // 为何用 setTimeout
+      setTimeout(() => {
+        try {
+          const thenChain = onFulfilled(that.value)
+          // promise 解析过程 ...
+        }catch(e) {
+          reject(e)
+        }
+      })
+    }
+    // 状态为已拒绝
+    if(that.status === REJECTED) {
+      // 为何用 setTimeout
+      setTimeout(() => {
+        try {
+          const thenChain = onRejected(that.reason)
+          // promise 解析过程 ...
+        }catch(e) {
+          reject(e)
+        }
+      })
+    }
+    
+    if(that.status === PENDING) {
+    
+      that.resolveCallbacks.push(() => {
+        setTimeout(() => {
+          try {
+            const thenChain = onFulfilled(that.value)
+            // promise 解析过程 ...
+          }catch(e) {
+            reject(e)
+          }
+        })
+      })
+      
+      that.rejectCallbacks.push(() => {
+        setTimeout(() => {
+          try {
+            const thenChain = onRejected(that.reason)
+            // promise 解析过程 ...
+          }catch(e) {
+            reject(e)
+          }
+        })
+      })
+    }
+  })
+  
+  return promise;
+}
+```
+
+可以看到，上述代码中
 
