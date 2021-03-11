@@ -8,11 +8,11 @@
 
 在遇到一段JS代码时，它的执行顺序表面看是按照顺序执行，但是内部其实不然。 **一段JS在执行之前，首先会被编译器进行编译，之后会在JS引擎的控制下执行代码**
 
-![JS&#x6267;&#x884C;&#x987A;&#x5E8F;](https://raw.githubusercontent.com/Wangbaoqi/blogImgs/master/nateImgs/JavaScript/ctx/event_1.png)
+![JS&#x6267;&#x884C;&#x987A;&#x5E8F;](../../.gitbook/assets/event_1.png)
 
 **执行上下文**
 
-![&#x6267;&#x884C;&#x4E0A;&#x4E0B;&#x6587;](https://raw.githubusercontent.com/Wangbaoqi/blogImgs/master/nateImgs/JavaScript/ctx/event_2.png)
+![&#x6267;&#x884C;&#x4E0A;&#x4E0B;&#x6587;](../../.gitbook/assets/event_2.png)
 
 #### 编译阶段
 
@@ -97,7 +97,7 @@ variable environment {
 
 **栈溢出**
 
-调用栈也是有大小的，栈溢出这种问题在开发中出现的概率也不小，（PS：toMe）。如果函数递归调用并且没有结束条件的时候，通常会产生栈溢出
+调用栈也是有大小的，栈溢出这种问题在开发中出现的概率也不小。如果函数递归调用并且没有结束条件的时候，通常会产生栈溢出
 
 ### 初探事件循环、消息队列
 
@@ -118,7 +118,7 @@ function MainThread() {
 
 **要在线程运行的过程中处理新加入的任务，就需要采用事件循环机制了**
 
-![&#x5FAA;&#x73AF;&#x673A;&#x5236;](https://raw.githubusercontent.com/Wangbaoqi/blogImgs/master/nateImgs/JavaScript/ctx/event_3.png)
+![&#x5FAA;&#x73AF;&#x673A;&#x5236;](../../.gitbook/assets/event_3.png)
 
 ```javascript
 function getInput(val) {
@@ -138,11 +138,15 @@ function MainThread() {
 
 **用第二版线程是无法处理其他线程发送的任务的，因此，消息队列就产生了**
 
-\*\*消息队列\*\*
+#### 消息队列
 
-![&#x6D88;&#x606F;&#x961F;&#x5217;](https://raw.githubusercontent.com/Wangbaoqi/blogImgs/master/nateImgs/JavaScript/ctx/event_4.png) 消息队列中有很多的任务类型（输入事件-鼠标滚动、点击、移动，微任务，文件读写、websocket、定时器等）, 每当有新的线程的任务来的时候，就会进入到消息队列中，等待主线程中的任务执行完成之后再执行。
+![&#x6D88;&#x606F;&#x961F;&#x5217;](../../.gitbook/assets/event_4.png)
 
-![eventLoop](https://raw.githubusercontent.com/Wangbaoqi/blogImgs/master/nateImgs/JavaScript/ctx/event_5.png) **页面使用单线程的缺点**
+消息队列中有很多的任务类型（输入事件-鼠标滚动、点击、移动，微任务，文件读写、websocket、定时器等）, 每当有新的线程的任务来的时候，就会进入到消息队列中，等待主线程中的任务执行完成之后再执行。
+
+![eventLoop](../../.gitbook/assets/event_5.png)
+
+**页面使用单线程的缺点**
 
 1. 处理优先级高的任务 
 
@@ -155,7 +159,7 @@ function MainThread() {
 
 通常将消息队列中的任务称为**宏任务**，每个宏任务中包含一个微任务队列，在执行宏任务的过程中，如果有DOM有变化，会将这些操作DOM的操作保存在微任务中，这样就解决了实时性问题
 
-1. 如何解决单个任务执行时间过长问题
+    2. 如何解决单个任务执行时间过长问题
 
 因为所有任务都是在单线程中执行的，如果某个任务执行的时间过长，则会影响用户的体验。
 
@@ -382,7 +386,9 @@ function fetchData(url) {
 
 如果在执行微任务的同时，产生了新的微任务，则将改微任务添加到微任务队列中，V8引擎会循环执行微任务队列
 
-直观的看个例子 ![&#x5FAE;&#x4EFB;&#x52A1;&#x6267;&#x884C;&#x65F6;&#x673A;](https://raw.githubusercontent.com/Wangbaoqi/blogImgs/master/nateImgs/JavaScript/ctx/event_7.png)
+直观的看个例子 
+
+![&#x5FAE;&#x4EFB;&#x52A1;&#x6267;&#x884C;&#x65F6;&#x673A;](https://raw.githubusercontent.com/Wangbaoqi/blogImgs/master/nateImgs/JavaScript/ctx/event_7.png)
 
 ![&#x5FAE;&#x4EFB;&#x52A1;&#x6267;&#x884C;&#x65F6;&#x673A;](https://raw.githubusercontent.com/Wangbaoqi/blogImgs/master/nateImgs/JavaScript/ctx/event_8.png)
 
