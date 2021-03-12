@@ -528,21 +528,21 @@ x2.then(res => {
 
 1. Promise 实现了回调函数延时绑定
 
-   ```javascript
-   // 执行业务逻辑
-   function executor(resolve, reject) {
-   resolve(2)
-   }
-   let x1 = new Promise(executor)
-   // 延迟绑定回调函数 
-   function cbResolve(val) {
-   console.log(val)
-   }
-   // 通过then延时绑定
-   x1.then(cbResolve)
-   ```
+```javascript
+// 执行业务逻辑
+function executor(resolve, reject) {
+  resolve(2)
+}
+let x1 = new Promise(executor)
+// 延迟绑定回调函数 
+function cbResolve(val) {
+  console.log(val)
+}
+// 通过then延时绑定
+x1.then(cbResolve)
+```
 
-2. 回调函数返回值穿透到最外层
+   2. 回调函数返回值穿透到最外层
 
 ```javascript
 // 执行业务逻辑
