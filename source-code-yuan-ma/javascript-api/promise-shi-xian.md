@@ -218,5 +218,62 @@ PromiseN.prototype.then = function(onFulfilled, onRejected) {
 }
 ```
 
-可以看到，上述代码中
+可以看到，上述代码中，可以看到用 `setTimeout`  包裹了 `then` 中的 `resolve` 和 `reject` 函数，这是因为规范规定在[执行上下文](https://es5.github.io/#x10.3)**堆栈仅包含平台代码之前，不得调用** **`onFulfilled`** **或** **`onRejected`  。**
+
+使用 `setTimeout` 涉及到了 **JavaScript Runtime** 了，之前也提到了[期约的非重入](../../javascript-advance/javascript-jin-jie/sync-promise.md#qi-yue-fei-zhong-ru) ，在当前同步代码没有执行完毕之前是不能执行异步代码的，比如这里的 **`onFulfilled`** **或** **`onRejected` 。**
+
+从[**事件循环**](../../browser-liu-lan-qi-xuan-ran/browser-gong-zuo-yuan-li/browser-eventloop.md)角度来讲，`setTimeout` 是一个异步操作，所以会将其置入[异步队列](../../browser-liu-lan-qi-xuan-ran/browser-gong-zuo-yuan-li/browser-eventloop.md#shi-jian-xun-huan-settimeout)中，等当前任务（同步代码）执行结束之后，才会执行异步队列中的任务**。**
+
+规范规定，在执行完 `onResolved` 或者 `onRejected` 之后，会执行 **promise 解决步骤** 过程。
+
+### Promise Resolution Procedure
+
+promise 解决过程 是一个抽象操作，将 `promise` 和 `value` 作为输入，表示为`[[promise]] (promise, x`\) , 如果 x 具有`thenable` 特性，就假设  `x` 的 行为至少有点像`promise`。将试图使`promise` 接收 `x` 的状态，否则，它使用值 `x` 执行 `promise` 。
+
+```javascript
+function resolutePromise(promise, x, resolve, reject) {
+  if(promise === x) return new TypeError('type circle');
+  
+  if(x && typeof x === 'object' && typeof x === 'function') {
+    let called = false;
+    
+    try {
+      let then = x.then;
+      if(typeof then === 'function') {
+        then.call(
+          x,
+          v => {
+            if(called) return;
+            called = true;
+            resolutePromise(promise, v, resolve, reject);
+          },
+          e => {
+            if(called) return;
+            called = true;
+            reject(e);
+          }
+        )
+      }else {
+        if(called) return;
+        called = true;
+        resolve(x)
+      }
+    }catch (e) {
+      if(called) return;
+      called = true;
+      reject(e);
+    }
+  }else {
+    resolve(x)
+  }
+}
+```
+
+ 根据规范 
+
+
+
+
+
+
 
