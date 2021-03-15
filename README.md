@@ -40,3 +40,7 @@ JavaScript 在前端中处在不可缺少的地位，其重要性相当于一栋
 
 ![JS mind](https://raw.githubusercontent.com/Wangbaoqi/blogImgs/master/nateImgs/index/JavaScript.png)
 
+**手指轻轻一动，大千世界等你** 😎 
+
+![](.gitbook/assets/wechat.jpg)
+
