@@ -33,7 +33,7 @@ typeof Symbol(); // ”symbol“
 
 **undefined和undeclared**
 
-::: warning undefined 和 undeclared（未声明）不是同一个概念；undefined是已经声明了，并未赋值；而undeclared是没有声明，已经使用了 :::
+undefined 和 undeclared（未声明）不是同一个概念；undefined是已经声明了，并未赋值；而undeclared是没有声明，已经使用了 
 
 ```javascript
 var a;

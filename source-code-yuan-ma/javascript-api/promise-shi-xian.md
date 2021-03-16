@@ -232,44 +232,70 @@ promise 解决过程 是一个抽象操作，将 `promise` 和 `value` 作为输
 
 ```javascript
 function resolutePromise(promise, x, resolve, reject) {
+
+  // 规范2.3.1 如果promise和x相等 那么抛出一个 TypeError
   if(promise === x) return new TypeError('type circle');
   
+  // 规范2.3.2 如果 x 是一个promise
+  if(promise instanceof PromiseN) {
+     // 规范2.3.2.1 如果x是PENDING状态 promise必须保持PENDING状态，直到fulfilled/reject
+     if(x.status === PENDING) {
+        x.then(
+          (value) => {
+            resolutePromise(promise, value, resovle, reject)
+          },
+          reject()
+        )
+     }else {
+       // 规范2.3.2.2/规范2.3.2.3
+       // 如果x的状态为fulfilled/reject，则肯定是一个正常的值，继续传递正常值
+       x.then(resolve, reject)
+     }
+  }
+  // 规范2.3.3 如果x是一个对象或者函数  
   if(x && typeof x === 'object' && typeof x === 'function') {
     let called = false;
     
     try {
+      // 规范2.3.3.1 
       let then = x.then;
+      // 规范2.3.3.3 如果then是一个函数 
+      // 调用then.call(x, resolvePromiseFn, rejectPromise)
       if(typeof then === 'function') {
         then.call(
           x,
-          v => {
+          // 规范2.3.3.3.1 resolvePromiseFn 的入参为y,
+          // 执行resolutePromise(promise, y, resolve, reject)
+          y => {
             if(called) return;
             called = true;
-            resolutePromise(promise, v, resolve, reject);
+            resolutePromise(promise, y, resolve, reject);
           },
+          // 规范2.3.3.3.2 rejectPromise 的入参为e,
+          // 执行reject(e)
           e => {
             if(called) return;
             called = true;
             reject(e);
           }
         )
-      }else {
+      }else { // 规范2.3.3.4 如果then不是一个函数，fulfilled promise with x
         if(called) return;
         called = true;
         resolve(x)
       }
-    }catch (e) {
+    }catch (e) { // 规范2.3.3.2 如果x.then出错 reject promise with as a reason 
       if(called) return;
       called = true;
       reject(e);
     }
-  }else {
+  }else { // 规范2.3.3.3 如果x不是一个函数或者对象 fulfilled promise with x 
     resolve(x)
   }
 }
 ```
 
- 根据规范 
+### Promise.resolve
 
 
 
