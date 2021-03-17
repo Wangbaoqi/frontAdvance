@@ -73,7 +73,7 @@ const promise1 = Promise.resolve('resolved')
 
 期约的状态开始不一定是 `pending` 的，是由执行函数来决定。
 
-### 期约实例方法
+### 期约实例（静态）方法
 
 期约的实例方法是连接**外部同步代码**和**内部异步代码**的桥梁。可以处理期约成功或者失败的数据，连续对期约求值。
 
@@ -81,23 +81,96 @@ const promise1 = Promise.resolve('resolved')
 
 #### Promise.prototype.then
 
-期约实例方法 then 是比较重要的一个方法，可以获取到执行器函数传递的参数。
+期约实例方法 `then` 是比较重要的一个方法，可以获取到执行器函数传递的参数。
 
 接收两个参数（可选），`onResolved`  和 `onRejected`  函数，前者处理期约状态为 `resolve` ，后者处理期约状态为 `reject` ，如果传递非函数的参数，都会静默不会处理。如果只处理期约状态只为 `reject` ，第一个参数传 `undefined` 。
 
 返回一个新的期约实例（promise）。
 
+```javascript
+const promise = new Promise((resolve, reject) => {
+   resolve('right control')
+})
+.then((res) => {
+   console.log(res); // right control
+})
+.then((v) => {
+   console.log(b) // undefined
+})
+```
+
 #### Promise.prototype.catch
+
+期约实例方法 catch 用于指定出错的回调，是特殊的 `then` ，`promise.then(null, reject)` ，之后可以继续链式调用
+
+```javascript
+promise.then(res => {
+   console.log(result)
+})
+.catch(e => {
+   console.log(e); // ReferenceError result is not defined
+})
+// or 
+promise.then(res => {
+   console.log(result)
+})
+.then(null, e => {
+   console.log(e); // ReferenceError result is not defined
+})
+```
 
 #### Promise.prototype.finally
 
-#### Promise.prototype.all
+期约实例方法 `finally` 不管之前的状态是什么，都会执行的，这个是**ES7（ES2018）标准引入的。**
 
-#### Promise.prototype.race
+`finally` 回调函数不接受任何参数，跟 `promise` 的状态是无关的。并且返回一个新的 `promise` 对象，可以链式调用
 
-#### Promise.prototype.resolve
+```javascript
+promise.then(res => {
+  return res
+})
+.finally(() => {
+  return 'finally'
+})
+.then(res => {
+  console.log(res); // right control
+})
+```
 
-#### Promise.prototype.reject
+可以看到 `finally` 里回调函数返回任何类型，下一个 `then` 都不会获取到
+
+#### Promise.all
+
+`Promise.all` 将多个 `promise` 实例包装成一个新的期约实例。Promise.all 接受一个数组为参数，数组内部为期约实例。
+
+```javascript
+const p = Promise.all([p1,p2,p3])
+```
+
+`Promise.all` 的状态由其多个期约实例决定
+
+* 如果`p1`、`p2`、`p3`的状态都是 `fulfilled` ，则 `p` 的状态为 `fulfilled` 
+* 如果 `p1`、`p2`、`p3` 中有一个状态为`reject` ， 则 `p` 的状态为 `rejected` 
+
+#### Promise.race
+
+`Promise.race` 跟 `Promise.all` 类似，只不过 `race` 的状态跟 `all` 稍有点区别。
+
+```javascript
+const p = Promise.race([p1,p2,p3])
+```
+
+Promise.race 的状态取决于`p1`、`p2`、`p3` 谁的状态先改变，首先改变的实例的状态就是最终的状态。
+
+#### Promise.resolve
+
+
+
+
+
+
+
+#### Promise.reject
 
 ### 期约非重入
 
