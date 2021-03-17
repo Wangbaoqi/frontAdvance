@@ -4,9 +4,9 @@
 
 ### 真实DOM和其解析流程
 
-```text
-![real-dom](https://raw.githubusercontent.com/Wangbaoqi/blogImgs/master/nateImgs/browser/domLayout.png)
+![](../../.gitbook/assets/domlayout.png)
 
+```text
 浏览器的渲染过程大致分为:
 创建```DOM```树 -> 创建```style rules``` -> 构建```render``` 树 -> 布局```Layout``` -> 绘制```painting
 ```
