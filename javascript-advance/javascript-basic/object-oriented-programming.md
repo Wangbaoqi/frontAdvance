@@ -421,6 +421,13 @@ Object.__proto__ === Function.prototype; // true
 Function.prototype.__proto__ === Object.prototype; //true
 ```
 
+* 每个对象有一个属性  _proto_ , 该属性指向一个对象，也就是 `原型` 。
+* 每个对象或者对象的原型通过 `constructor` 获取改对象的构造函数。构造函数通过 `prototype` 获取该对象的原型。
+* 所有的函数可以通过 _proto_ 获取 `Function` 对象。
+* 所有的对象可以通过 _proto_ 获取 `Object` 对象。
+* 对象之间通过_proto_ 连接起来，称之为原型链。
+* 根对象 `Object` 的原型是 `null`。
+
 ### 继承
 
 许多语言都支持两种继承方式，接口继承和实现继承；接口继承只继承方法签名，实现继承则继承实际的方法，函数没有签名，JS只支持实现继承 
