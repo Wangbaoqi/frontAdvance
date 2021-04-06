@@ -380,6 +380,47 @@ console.log(p1.sayName)
 
 可以看到，这种模式没有this，new，没有共享模式，想要访问某一个属性，必须通过某个特定的方法，因此这种方式提供了安全性。
 
+### 原型之间关系
+
+下面图可以完全解释原型以及原型之间的关系
+
+![](../../.gitbook/assets/prototype-relation.png)
+
+可以从上图看出实例和构造函数以及其原型之间的关系。下面从代码方面分析一下
+
+```javascript
+// 构造函数 Foo
+function Foo() {};
+// 基于构造函数生成 Foo 实例 f1
+let f1 = new Foo();
+
+f1.__proto === Foo.prototype; // true 实例的原型指向的是构造函数的原型
+Foo.prototype.constructor === Foo; // true 构造函数的原型的constructor指向的是其自身
+f1.__proto.constructor === Foo; // true 实例的原型的constructor指向的是实例的构造函数
+f1.constructor === Foo; // true 实例的constructor指向的也是构造函数
+
+// 实例化 根对象 的实例 o1
+let o1 = new Object();
+// o1 的原型指向跟上述Foo结果是一致的 唯一的区别是Object.prototype.__proto__ 指向的是null
+Object.prototype.__proto__ === null; // true
+
+// Foo 和 Object之间的关系
+Foo.prototype.__proto__ === Object.prototype; // true Foo 构造函数的原型的__proto__指向的是根对象的原型
+f1.__proto__.__proto__ === Object.prototype; // true
+
+// Foo 和 Function
+Foo intanceof Function; // true 
+Foo.constructor === Function; // true 所有函数的constructor最终都是指向Function
+
+// Foo是由Function构造
+Foo.__proto__ === Function.prototype; // true
+// Object是由Function构造 同理
+Object.__proto__ === Function.prototype; // true
+
+// Function 的原型指向Object的原型
+Function.prototype.__proto__ === Object.prototype; //true
+```
+
 ### 继承
 
 许多语言都支持两种继承方式，接口继承和实现继承；接口继承只继承方法签名，实现继承则继承实际的方法，函数没有签名，JS只支持实现继承 
