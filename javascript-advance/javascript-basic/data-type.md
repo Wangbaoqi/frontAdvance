@@ -63,7 +63,16 @@ let str = new String('str');
 str instanceof String; // true
 ```
 
-**因此instanceof是不能判断基本类型的值**
+**因此instanceof是不能判断基本类型的值，除了 hack 的方式**
+
+```javascript
+class CheckIsNumber {
+  static [Symbol.hasInstance](number) {
+    return typeof number === 'number'
+  }
+}
+1 instanceof CheckIsNumber
+```
 
 #### constructor 构造函数判断类型
 
@@ -108,7 +117,13 @@ var b = a.split('').reverse().join('')
 
 ### 类型转换
 
-JS类型转换的情况大致有三种： 1. 转换成boolean 2. 转换成string 3. 转换成number
+JS类型转换的情况大致有三种： 
+
+     1. 转换成boolean 
+
+     2. 转换成string 
+
+     3. 转换成number
 
 **类型转换表格**
 

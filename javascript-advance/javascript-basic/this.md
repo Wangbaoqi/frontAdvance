@@ -164,8 +164,8 @@ Function.prototype.eBind = function(ctx) {
 使用 new 来调用函数或者说是构造函数调用时，会自动执行以下操作：
 
 1. 创建一个全新的对象。
-2. 这个新对象会被执行\[\[原型\]\]连接
-3. 这个新对象会绑定到函数调用的this
+2. 这个新对象会被执行\[\[原型\]\]连接，连接到构造函数的原型
+3. 这个新对象会绑定到函数调用的this并且执行构造函数
 4. 如果函数没有返回其他对象，那么new表达式中的函数调用会自动返回这个对象
 
 ```javascript
@@ -175,6 +175,34 @@ function Foo(a) {
 
 var bar = new Foo(2)
 bar.a; // 2
+```
+
+#### 手写 new
+
+根据上述 `new` 的实现过程来手写一个 **new**
+
+```javascript
+// 构造函数
+function Foo() {
+  this.a = '11'
+}
+
+// new 实现
+
+function m_new() {
+  // 创建一个新对象
+  let obj = new Object();
+  // 获取构造函数 参数一个位
+  let Constructor = Array.prototype.shift.call(arguments);
+  // 将构造函数的原型绑定到新对象的
+  obj.__proto__ = Constructor.prototype;
+  // 绑定 this 构造函数内部的this绑定到了新对象上
+  let res = Constructor.call(obj, arguments);
+  // 返回对象 如果构造函数返回对象，则改构造函数是一个普通函数，则改对象会覆盖新建对象
+  return typeof res === 'object' ? res : obj;
+}
+
+let m_obj = m_new(Foo); // Foo{a: '11'}
 ```
 
 #### 绑定优先级
