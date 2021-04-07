@@ -157,7 +157,7 @@ Function.prototype.eBind = function(ctx) {
 }
 ```
 
-**new绑定**
+### **new绑定**
 
 > 首先我们重新定义一下 JavaScript 中的“构造函数”。在 JavaScript 中，构造函数只是一些 使用 new 操作符时被调用的函数。它们并不会属于某个类，也不会实例化一个类。实际上， 它们甚至都不能说是一种特殊的函数类型，它们只是被 new 操作符调用的普通函数而已。
 

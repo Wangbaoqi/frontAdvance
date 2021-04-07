@@ -72,6 +72,8 @@
 ## SOURCE CODE、源码
 
 * [JavaScript API](source-code-yuan-ma/javascript-api/README.md)
+  * [new 操作符实现](source-code-yuan-ma/javascript-api/new-cao-zuo-fu-shi-xian.md)
+  * [原型继承 实现](source-code-yuan-ma/javascript-api/yuan-xing-ji-cheng-shi-xian.md)
   * [Promise 源码实现](source-code-yuan-ma/javascript-api/promise-shi-xian.md)
 
 ## TOOL CHAIN、工具链
