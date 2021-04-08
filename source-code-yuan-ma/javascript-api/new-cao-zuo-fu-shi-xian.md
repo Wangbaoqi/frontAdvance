@@ -1,6 +1,6 @@
 # 原型继承实现
 
-在之前章节「[JavaScript基础 - 面对对象](../../javascript-advance/javascript-basic/object-oriented-programming.md#yuan-xing-mo-shi)」已经阐述过原型以及继承的方式。这里手动实现下继承的各个方式以及对比**ES6** `Class` 实现继承之间的区别。
+在之前章节「[JavaScript基础 - 面对对象](../../javascript-advance/javascript-basic/object-oriented-programming.md#yuan-xing-mo-shi)」已经阐述过原型以及继承的方式。这里手动实现下继承的各个方式。
 
 在ES5中有以下几种实现继承的方式，而且每一种都是为了解决上一种存在的问题而存在的。
 
