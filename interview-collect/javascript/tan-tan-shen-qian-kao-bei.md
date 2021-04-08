@@ -160,7 +160,7 @@ JSON.parse(JSON.stringify(objReg))
 
 ```javascript
 function cloneShadow(obj) {
-  if(typeof obj !== 'obj' || obj === null) return obj
+  if(typeof obj !== 'object' || obj === null) return obj
 
   var target = Array.isArray(obj) ? [] : {}
 
