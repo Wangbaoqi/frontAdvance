@@ -13,12 +13,19 @@
 [MDN - Object.assign](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/assign):是将所有可枚举属性的值从一个或者多个源对象复制到目标对象，将返回这个目标对象。
 
 ```javascript
-var obj = {
-  name: 'nate.wang',
-  friends: {
-    name: 'baoqiwang',
-    age: 20
-  }
+let obj = {
+  a: 1,
+  b: '1',
+  c: {
+    d: '2'
+  },
+  e: [2],
+  f: function(){},
+  g: Symbol('dd'),
+  h: null, 
+  j: undefined,
+  p: new Date(),
+  k: /\./
 }
 var newObj = Object.assign({}, obj)
 console.log(newObj)
@@ -118,11 +125,19 @@ conosle.log(newObj)
 * 不能处理正则
 
 ```javascript
-var obj = {
-  a: undefined,
-  b: Symbol('su'),
-  c: function(){},
-  d: 30
+let obj = {
+  a: 1,
+  b: '1',
+  c: {
+    d: '2'
+  },
+  e: [2],
+  f: function(){},
+  g: Symbol('dd'),
+  h: null, 
+  j: undefined,
+  p: new Date(),
+  k: /\./
 }
 var newObjF = JSON.parse(JSON.stringify(obj)) // {d: 30}
 
@@ -221,13 +236,14 @@ var newObjs = deepClone(objs)
 1. 消除尾递归
 2. 采用循环的方式 不会出现爆栈的情景 
 
-在这里使用循环的方式来破解递归爆栈
+在这里使用`BFS`循环的方式来破解递归爆栈，采用 `Map` 来解决循环引用以及重复值的调用
 
 先附上code
 
 ```javascript
 function deepLoop(source) {
-  const root = {}
+  const root = {};
+  const visited = new Map();
   // 栈顶的元素
   const loopList = [
     {
@@ -247,7 +263,12 @@ function deepLoop(source) {
     let res = parent;
 
     if(typeof key !== 'undefined') {
-      res = parent[key] = {}
+      res = parent[key] = {};
+    }
+    // 循环引用 减少重复值的调用
+    if(visited.has(key)) {
+      parent[key] = visited.get(key);
+      continue;
     }
 
     for(let i in data) {
@@ -263,14 +284,13 @@ function deepLoop(source) {
         }
       }
     }
+    visited.set(key, value)
   }
   return root;
 }
 ```
 
-这里采用了数据结构**栈**的方式。
-
-结束循环的条件是栈为空。
+这里采用了数据结构**栈**的方式，结束循环的条件是栈为空。
 
 ### 参考
 
