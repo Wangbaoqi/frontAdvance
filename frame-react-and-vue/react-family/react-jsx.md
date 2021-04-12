@@ -1,2 +1,2 @@
-# react - jsx
+# React - JSX
 

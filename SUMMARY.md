@@ -63,7 +63,7 @@
   * [路由](frame-react-and-vue/frame-mind/router.md)
   * [数据管理](frame-react-and-vue/frame-mind/state-control.md)
 * [React Family](frame-react-and-vue/react-family/README.md)
-  * [react - jsx](frame-react-and-vue/react-family/react-jsx.md)
+  * [React - JSX](frame-react-and-vue/react-family/react-jsx.md)
   * [react  - component](frame-react-and-vue/react-family/react-component.md)
   * [redux - 手动实现](frame-react-and-vue/react-family/redux-real.md)
   * [react - redux 手动实现](frame-react-and-vue/react-family/react-redux-real.md)
