@@ -1,4 +1,4 @@
-# standard 系列 - 解析HTML文档
+# HTML语法系列 - 解析HTML文档
 
 > HTML 解析过程的输入由一系列代码点组成，这些代码点通过一个标记化阶段，然后是树构造阶段。输出是一个 Document 对象。
 
@@ -53,7 +53,7 @@ HTML parsing 不是等HTML文档加载完成之后再解析，而是边加载变
 
 #### 初始化FSM（状态机）
 
-这里简单的描述了[状态机](zh/webApi/browser/posts/statusMachine.html)的实现方式。接下来用状态机简单实现ParseHTML。
+这里简单的描述了[状态机](zh/webApi/browser/posts/statusMachine.html)的实现方式。接下来用状态机简单实现**ParseHTML。**
 
 在解析HTML中，常见的state有:
 
@@ -422,7 +422,7 @@ function singleQuotedAttributeValue(c) {
 
 #### emitToken以及构造DOM树
 
-每解析完一个标签，就会将改token添加到DOM树中，下面_emit_主要负责的就这部分内容。
+每解析完一个标签，就会将改token添加到DOM树中，下面_`emit`_主要负责的就这部分内容。
 
 ```javascript
 // emit 添加token到DOM树中
@@ -486,4 +486,6 @@ function emit(token) {
   }
 }
 ```
+
+
 
