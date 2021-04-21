@@ -242,7 +242,7 @@ factorialT(2, 1)
 
 **Class** 的出现会让 JS 的面向对象编程更像传统语言，是一种语法糖，让面向对象的实现更加清晰一点。
 
-#### constructor
+### constructor
 
 **constructor**构造函数是类默认的方法，可以通过`new`命令生成实例时，自动调用此方法，如果没有显示定义该方法，空的**constructor**会被默认添加。
 
@@ -254,7 +254,7 @@ let foo = new Foo();
 Foo.prototype === foo.__proto__; //true
 ```
 
-#### 类的实例
+### 类的实例
 
 类的实例通过调用`new`关键字产生的，实例上的属性除非是**显式**在构造函数中定义的，否则实例是获取不到的。只能从实例的原型中获取。
 
@@ -281,7 +281,7 @@ foo.hasOwnProperty("toString");
 foo.hasOwnProperty("getValue");
 ```
 
-#### this 的指向
+### this 的指向
 
 一般来讲，this 的指向是实例，但是有时结果就不一样了。
 
@@ -338,7 +338,7 @@ const { getBar } = new Foo();
 getBar(); // result
 ```
 
-#### 静态方法
+### 静态方法
 
 类的定义中，定义的方法都会被实例继承，而如果在方法前面加上`static`，则这个方法只有类本身可以访问。 静态方法中的**this**指向是当前类。静态方法可以通过**extends**来继承，静态方法也可以从**super**上调用的。
 
