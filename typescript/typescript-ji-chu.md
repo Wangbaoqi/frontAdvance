@@ -137,13 +137,19 @@ const bar: (s: sring) => string = (s) => {
 
 ### interface 接口
 
+> TypeScript的核心原则之一是对值所具有的_`结构`_进行类型检查。 它有时被称做“鸭式辨型法”或“结构性子类型化”。 在TypeScript里，接口的作用就是为这些类型命名和为你的代码或第三方代码定义契约。
 
+下面示例包含了以下几种接口类型：
 
-
+* readonly 只读属性
+* ? 可选属性
+* `[propName: string]`  额外的属性
+* 函数接口类型
+* 接口继承
 
 ```typescript
 interface Person {
-  // readonly name: string,
+  readonly sex: string,
   name: string,
   // age 可选属性
   age?: number,
@@ -174,11 +180,125 @@ const person = {
 }
 ```
 
+### 类类型
 
+TS 在ES6的基础上，对类增加了一些后端语言类的特性，比如访问特性 `public` 、`private`、`protect` 等等。下面逐一看这些特性。
 
+#### 继承
 
+继承直接是沿用了ES6的语法，使用关键字 `extends` , 是扩展类的一种手段，也是面向对象编程的一种方式。
 
+```typescript
+class Person {
+  name: string;
+  constructor(name: string) {
+    this.name = name;
+  }
+  getName() {
+    return this.name;
+  }
+}
 
+class Student extends Person {
+  constructor() {
+    super('nate')
+  }
+}
+```
+
+#### 访问修饰符
+
+访问修饰符 `public` 、`private`、`protect`  跟 `C#` 中类比较类似了。
+
+* `public`  -   默认为public，类里和类外面都可以访问
+
+```typescript
+// name 属性在Person类里和实例中都可以访问
+class Person {
+  public name: string
+  constructor(name: string) {
+    this.name = name;
+  }
+  getName() {
+    return this.name
+  }
+}
+const s = new Person('bao')
+s.name;
+```
+
+* `private` 声明为private时，则不能在类的外面访问，也就是它是私有的
+
+```typescript
+// name 属性只能在Person类里可以访问
+class Person {
+  private name: string
+  constructor(name: string) {
+    this.name = name;
+  }
+  getName() {
+    return this.name
+  }
+}
+const s = new Person('bao')
+s.getName(); // 通过方法来访问私有属性
+```
+
+* protected 跟 `private` 很相似，但是`protected`在派生类中可以访问
+
+```typescript
+// name 属性在Person类或者派生类中都可以访问
+class Person {
+  protected name: string
+  constructor(thename: string)
+    this.name = thename;
+  }
+}
+class Student extends Person {
+  constructor(sName: string) {
+    super(sName)
+  }
+  // 派生类中访问 name
+  getName() {
+    return this.name
+  }
+}
+const s = new Student('bao')
+```
+
+类中的构造函数也可以被标记为`protected` ，表明该类不能被实例化，只能被继承
+
+```typescript
+class Person {
+  protected name: string
+  protected constructor(thename: string)
+    this.name = thename;
+  }
+}
+class Student extends Person {
+  constructor(name) {
+    super(name)
+  }
+  getName() {
+    console.log(this.name)
+  }
+}
+```
+
+#### readonly 修饰符
+
+顾名思义，`readonly` 只能读，不能写
+
+```typescript
+class Person {
+  readonly name: string;
+  constructor(theName: string) {
+    this.name = theName; // error just read
+  }
+}
+```
+
+#### 存取器 get 和 set
 
 
 
