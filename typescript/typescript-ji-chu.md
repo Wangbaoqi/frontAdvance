@@ -300,5 +300,67 @@ class Person {
 
 #### 存取器 get 和 set
 
+存取器也跟ES6 中的`class`类似，目的是为了有效控制访问成员属性。
+
+首先，存取器要求你将编译器设置为输出ECMAScript 5或更高。 不支持降级到ECMAScript 3。 其次，只带有 `get`不带有 `set`的存取器自动被推断为 `readonly`
+
+```typescript
+class Person {
+  private _name: string;
+  
+  set name(name: string) {
+    this._name = name
+  }
+  get name() {
+    return this._name
+  }
+}
+let p = new Person();
+p.name = 'nate';
+p.name; // nate
+```
+
+#### 静态属性
+
+静态属性也是跟ES6类似，是存在在于类上的属性，而不是实例上的，只有类有权访问该属性。
+
+```typescript
+class Person {
+  static name: string;
+  setName() {
+    Person.name = 'nate'
+  }
+}
+const p = new Person();
+p.setName();
+Person._name; // nate
+```
+
+#### 抽象类
+
+抽象类作为其他派生类的基类使用，一般是不会被实例化的。可以包含成员的实现细节，abstract 关键字是用于定义抽象类以及其内部的抽象方法。
+
+```typescript
+abstract class Person {
+  constructor(public name: string) {
+    this.name = name;
+  }
+  abstract getType(): void; // 必须在派生类中实现
+}
+
+class Student extends Person {
+   constructor(public name: string) {
+     super(name)
+   }
+   getType() {
+      reutrn 'student'
+   }
+}
+let s = new Student('nate')
+s.getType()
+```
+
+
+
 
 
