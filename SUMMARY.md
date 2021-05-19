@@ -89,7 +89,7 @@
 * [打包工具](tool-chain-gong-ju-lian/da-bao-gong-ju.md)
 * [转译器](tool-chain-gong-ju-lian/zhuan-yi-qi.md)
 
-## INTERVIEW、收集 <a id="interview-collect"></a>
+## QUESTION、收集 <a id="interview-collect"></a>
 
 * [Html、CSS](interview-collect/html-css.md)
 * [JavaScript](interview-collect/javascript/README.md)
@@ -98,4 +98,5 @@
   * [谈谈数组去重](interview-collect/javascript/tan-tan-shu-zu-qu-zhong.md)
   * [谈谈深浅拷贝](interview-collect/javascript/tan-tan-shen-qian-kao-bei.md)
 * [浏览器](interview-collect/liu-lan-qi.md)
+* [Git](interview-collect/git.md)
 
