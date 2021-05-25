@@ -166,10 +166,6 @@ Promise.race 的状态取决于`p1`、`p2`、`p3` 谁的状态先改变，首先
 
 
 
-
-
-
-
 #### Promise.reject
 
 ### 期约非重入
@@ -261,8 +257,6 @@ function cancelDelayResolve(delay) {
 // 异步开始
 btnStart.addEventListener('click', () => cancelDelayResolve(1000))
 ```
-
-
 
 ### 异步函数
 
