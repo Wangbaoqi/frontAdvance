@@ -1,6 +1,6 @@
-# JS 进阶 - 迭代器与生成器
+# JS 进阶 - 迭代器与异步函数
 
-#### Generator 函数
+### Generator 函数
 
 `function *` 定义了一个 generator 函数，返回一个`Generator`对象，`Generator`对象由`Generator`构造函数返回，符合_迭代协议_和_迭代器协议_，它是一个可以退出又重新进入的函数
 
@@ -100,7 +100,7 @@ reGen.next(); // { value: 'nate', done: true}
 reGen.next(); // { value: 'undefiend', done: true}
 ```
 
-#### Async 函数
+### Async 函数
 
 async 函数是由构造函数`AsyncFunction`的实例，函数体内可以使用关键字`await`，返回一个`promise`，如果返回值不是显示的`promise`，则会返回一个隐式的`promise`。当函数体中有多个 `await`表达式时，整个进度会被暂时挂起，同步的执行`await`表达式，等待异步的执行结果，异步执行结束之后，进度会被恢复。
 

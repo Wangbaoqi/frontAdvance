@@ -1,4 +1,4 @@
-# JS 进阶 - 期约与异步函数
+# JS 进阶 - 期约Promise
 
 ### 异步编程
 
@@ -258,5 +258,5 @@ function cancelDelayResolve(delay) {
 btnStart.addEventListener('click', () => cancelDelayResolve(1000))
 ```
 
-### 异步函数
+### 
 
