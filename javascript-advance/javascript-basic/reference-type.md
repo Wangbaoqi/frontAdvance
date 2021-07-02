@@ -22,9 +22,13 @@ Global 对象是JavaScript中最特殊的一个对象，因为它是不存在的
 
 ### 集合引用类型
 
-集合引用类型有 Object 、Array、TypeArray、Map、WeakMap、Set 和 WeakSet，后四种是ES6新增的引用类型。
+集合引用类型有 [Object](object.md) 、[Array](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array)、[TypeArray](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/TypedArray)、Map、WeakMap、Set 和 WeakSet，后四种是ES6新增的引用类型。
 
-有关Object、Array等经常使用的引用类型后面章节会专门涉及。
+有关Object、Array等经常使用的引用类型后面章节会专门涉及。这里阐述一下ES6新增的四种类型
 
-有关Map和Set的使用可以参考[ES6 入门](https://es6.ruanyifeng.com/#docs/set-map)。
+### Map
+
+
+
+
 
