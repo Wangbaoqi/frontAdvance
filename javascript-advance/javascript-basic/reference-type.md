@@ -26,9 +26,122 @@ Global 对象是JavaScript中最特殊的一个对象，因为它是不存在的
 
 有关Object、Array等经常使用的引用类型后面章节会专门涉及。这里阐述一下ES6新增的四种类型
 
-### Map
+### Map 映射
 
+Map是ES6新增的一种**键值对**的数据结构，在之前以**键值对**存储数据的方式为对象。
 
+#### Object和Map存储数据之间的区别
+
+* 键名：Object只能使用**数字**、**字符串**和**符号**作为键。而Map可以时候用任何类型的值作为键
+* 键值：Object和Map都可以使用任何类型的值
+* 内存占用：Object和Map在不同的浏览器中实现存在明显差异，而存储的键值对所占的内存要看浏览器给该类型分配到内存大小。但是给定固定的内存大小，Map存储的键值对所占的内存大小要比Object大50%。
+* 插入性能：Object和Map 在插入性能上所消耗的时间差不多，如果代码涉及大量的插入操作，Map的性能明显要好于Object
+* 查找性能：Object和Map在查找方面差异极小。
+* 删除性能：Map的删除操作都要比插入和查找更快，存在大量删除操作的时候，选择Map是个好的选择。
+
+### Map 基本API
+
+* set
+* get
+* has
+* clear
+* delete
+* entries
+* values
+* keys
+* size
+
+```javascript
+let map = new Map();
+let map1 = new Map([]); // map 和 map1都是空映射
+```
+
+Map接收一个[可迭代对象](../javascript-jin-jie/generator.md)作为参数，默认为`[]`   。需要包含键值对的数组，按照顺序插入到映射实例中。
+
+```javascript
+let map2 = new map([
+  ['key', 'value'],
+  [1, null],
+  [null, undefined]
+])
+map2; // Map(3) {"key" => "value", 1 => null, null => undefined}
+```
+
+除了上述初始化实现映射实例之外，也可以使用API `set`  ，如果要添加多个话，也可以链式的添加
+
+```javascript
+const obj = {a: 1};
+let map3 = map.set('sex', 'man')
+              .set(1, '1')
+              .set(null, 0)
+              .set(undefined, null)
+              .set(Symbol('1'), undefined)
+              .set(obj, function(){})
+              .set(false, 'pp')
+              .set(function(){}, null)
+```
+
+在获取键值的时候，对键名的是有要注意一下，对于基本类型来讲，键名映射其原始值，这里也会有其他意外情况发生。对于引用类型来讲，键名映射的是这个对象的引用（副本），跟这个对象的内容没有关系，在映射的过程中，该对象的属性发生了变化，改对象映射的键名还是没有变。
+
+```javascript
+let a = 2 * undefined; // NaN
+let b = 0 / ''; // NaN
+let obj = {};
+let objV = [];
+let map4 = new Map();
+map4.set(a, 'nate');
+map4.set(b, 'frank');
+map4.set(obj, objV);
+console.log(map4.get(a)); //nate
+console.log(map4.get(b)); //nate 这里原始两者的原始值是相同的
+obj.a = 'foo';
+objV.push('foo');
+console.log(map4.get(objV)); // ['foo'] 引用类型内部和映射没有关系
+```
+
+判断映射中的键值可以用`has`来判断。
+
+### Map 迭代
+
+Map的迭代和Object的对象不一样，Map内部是实现了迭代器协议（这个迭代器是由`entries`实现的）的，而且在迭代的过程中，迭代的顺序是按照初始化映射的顺序来的。
+
+映射的实例可以通过`entries` 或者 `[symbol.iterator]` 来获取迭代器
+
+```javascript
+let map5 = new Map();
+map.set(1, '1')
+map.set(2, '2')
+// ƒ entries() { [native code] }
+console.log(map5.entries == map5[Symbol.iterator]); // true 
+
+for(let item of map5.entries()) {
+  console.log(item); // [1, '1']
+}
+
+for(let item of map5[Symbol.iterator]()) {
+  console.log(item); // [1, '1']
+}
+```
+
+除此之外，还有`keys`、`values`、`forEach`方法可以遍历。
+
+```javascript
+let map6 = new Map();
+map.set(3, '3')
+map.set(2, '2')
+
+for(let key of map6.keys()) {
+  console.log(key); // 3
+}
+
+for(let val of map6.values()) {
+  console.log(val); // '3'
+}
+```
+
+除了遍历的方法之外，还有`delete`和`clear`方法了，删除映射和清除映射。
+
+### WeakMap 弱映射
 
 
 

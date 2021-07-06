@@ -73,8 +73,6 @@
   * [browser - EventLoop](browser-liu-lan-qi-xuan-ran/browser-gong-zuo-yuan-li/browser-eventloop.md)
   * [browser - DOM](browser-liu-lan-qi-xuan-ran/browser-gong-zuo-yuan-li/browser-dom.md)
   * [browser - 路由](browser-liu-lan-qi-xuan-ran/browser-gong-zuo-yuan-li/browser-lu-you.md)
-  * [browser - HTTP](browser-liu-lan-qi-xuan-ran/browser-gong-zuo-yuan-li/browser-http.md)
-  * [browser - Security](browser-liu-lan-qi-xuan-ran/browser-gong-zuo-yuan-li/browser-security.md)
 * [Google - V8](browser-liu-lan-qi-xuan-ran/google-v8.md)
 
 ## FRAME、React与Vue <a id="frame-react-and-vue"></a>

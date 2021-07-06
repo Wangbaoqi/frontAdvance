@@ -1,5 +1,13 @@
 # JS 进阶 - 迭代器与异步函数
 
+### 迭代协议（Iteration protocol）
+
+
+
+### 迭代器协议（iterator protocol）
+
+
+
 ### Generator 函数
 
 `function *` 定义了一个 generator 函数，返回一个`Generator`对象，`Generator`对象由`Generator`构造函数返回，符合_迭代协议_和_迭代器协议_，它是一个可以退出又重新进入的函数
