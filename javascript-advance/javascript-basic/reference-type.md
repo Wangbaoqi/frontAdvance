@@ -143,5 +143,73 @@ for(let val of map6.values()) {
 
 ### WeakMap 弱映射
 
+WeakMap 也是ES6新增的一种增强键值对存储的机制。强调的“弱”，具体现在在弱键这里，如果弱引用的**键**不属于真正的引用，因此不会阻止垃圾回收。
+
+**从垃圾回收的角度讲：**
+
+ **弱引用的键（对象）有其他引用的话（对象是被弱持有的），如果该对象被垃圾机制回收了，那么弱映射中的对应的键值对也会被移除，而Map是不会的，还是会保持在映射中，除非手动的清除该键值对。**
+
+弱引用的键只能是对象，不能是其他类型的值，否则会抛出异常。
+
+```javascript
+const obj = {a: 1}
+let wm = new WeakMap();
+wm.set(obj, 'nate')
+  .set(1, '1'); // TypeError: Invalid value used as weak map key
+```
+
+### WeakMap 基本API
+
+* set
+* get
+* has
+* delete
+
+可以看到，弱映射是没有迭代功能的，是因为键值对在任何时候都有可能被销毁。因此，也就没有`clear`方法了。
+
+### Set 集合
+
+Set也是ES6新增的集合类型，也像是加强的Map，两个有类似的API
+
+Set 实例化也是给构造函数传递一个可迭代的对象，其中就是插入到集合实例的元素，类似数组的形式。
+
+Set 会去掉插入中重复的值（包括引用类型，同一个引用的话\)
+
+```javascript
+let st = new Set(['a', '2', '4'])
+let st1 = new Set();
+st1.add('0')
+st1.add('1')
+```
+
+### Set 基本API
+
+* add
+* size
+* clear
+* delete
+* has
+* keys
+* values
+* entries
+
+这些API的用法跟Map 类似，尤其是迭代的用法，不同的是Set的实例也提供了一个迭代器，不过这个迭代器是由 `values` 实现的。
+
+除此之外，add 和 delete 的操作是`幂等`的，同一个值只能添加一次或者删除一次。
+
+### WeakSet 弱集合
+
+跟WeakMap 类似，weak 都是垃圾回收机制对待 **弱映射中的对象键** 和 **弱集合中的值** 的方式。
+
+WeakSet 中的值只能是Object类型或者是继承Object的对象。
+
+同样，如果说WeakSet中对值（对象）的引用是弱的，不是正式的引用，一旦这些对象被垃圾回收了，则WeakSet也就失去了该值，因此也就没有**迭代功能。**
+
+**WeakSet 基本API**
+
+* add
+* has
+* delete
+
 
 
