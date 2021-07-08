@@ -2,17 +2,15 @@
 
 ### 迭代协议（Iteration protocol）
 
+> 作为ECMAScript 2015 的补充规范，迭代协议并不是新的内置实现或语法，而是_协议_。这些协议可以被任何遵循某些约定的对象来实现。
 
+迭代协议分为两部分，可迭代协议和迭代器协议
 
-### 迭代器协议（iterator protocol）
+### 可迭代协议
 
+可迭代协议允许 JS 定制自身的迭代行为，可以通过`for of`来遍历，JS 也有一些内置的具有迭代器的对象，比如`Array`和`Map`，要实现迭代，必须实现`@@iterator`方法，也就意外着该对象或者其原型上有`@iteraor`属性。 该属性可以通过`[Symbol.iterator]`（一个无参数的函数，返回一个**符合迭代器**协议的对象）来获取。
 
-
-### Generator 函数
-
-`function *` 定义了一个 generator 函数，返回一个`Generator`对象，`Generator`对象由`Generator`构造函数返回，符合_迭代协议_和_迭代器协议_，它是一个可以退出又重新进入的函数
-
-_迭代协议（iterable protocol）_允许 JS 定制自身的迭代行为，可以通过`for of`来遍历，JS 也有一些内置的具有迭代器的类型，比如`Array`和`Map`，要实现迭代，必须实现`@@iterator`方法，也就意外着该对象或者其原型上有`@iteraor`属性。 该属性可以通过`[Symbol.iterator]`来获取.
+每当迭代一个对象时，就会调用`@@iterator`方法，不带任何参数，使用返回的迭代器获取迭代的值。
 
 ```javascript
 // 获取迭代器
@@ -24,26 +22,54 @@ arr[Symbol.iterator](); // Array Iterator {}
   // next: {
     // done: false,
     // value: 2
+  // }
+}
+```
+
+### 迭代器协议（iterator protocol）
+
+定义了产生一系列值，当所有值产生时，可能会产生一个返回值。当一个对象实现了具有`next`方法时，它就是一个迭代器。
+
+```javascript
+// 迭代器对象
+const iteratorObj = {
+  next() {
+    return {
+      done: false,
+      value: ''
+    }
+  },
+  [Symbol.iterator]() { return this }
+}
+```
+
+一些内置可迭代的对象，也是迭代器，比如，`String`、`Array`、`Map`等。Object是没有实现迭代器协议的，如果想使用for of 来遍历对象，可以自定义的实现内部的迭代器协议。
+
+```javascript
+const object = {
+  a: 1,
+  b: {},
+  c: '3',
+  d: [],
+  [Symbol.iterator]() {
+    const _this = this;
+    let idx = 0;
+    const keys = Object.keys(_this);
+    return {
+      next() {
+        value: _this[keys[idx++]]
+        done: idx > keys.length,
+      }
+    }
   }
 }
 ```
 
-每当迭代一个对象时，就会调用`@@iterator`方法，不带任何参数，使用返回的迭代器获取迭代的值。
+###  生成器函数 Generator
 
-_迭代器协议（iterator protocol）_定义了产生一系列值，当所有值产生时，可能会产生一个返回值。当一个对象实现了具有`next`方法时，它就是一个迭代器。
+生成器也是ES6增加的一个灵活的数据结构，可以暂停和恢复代码的执行。可以自定义迭代器和实现协程。
 
-```javascript
-let str = "hello";
-// generator 对象
-let iterator = str[Symbol.iterator](); // String Iterator {}
-typeof str[Symbol.iterator]; // function
-iterator.next(); // { done: false, value: 'h'}
-iterator.next(); // { done: false, value: 'e'}
-iterator.next(); // { done: false, value: 'l'}
-iterator.next(); // { done: false, value: 'l'}
-iterator.next(); // { done: false, value: '0'}
-iterator.next(); // { done: true, value: undefined }
-```
+`function *` 定义了一个 generator 函数，返回一个`Generator`对象，`Generator`对象由`Generator`构造函数返回，符合_迭代协议_和_迭代器协议_，它是一个可以退出又重新进入的函数
 
 调用`Generator`函数不会立即执行，而是会返回该函数的迭代器对象，当调用迭代器对象的`next()`方法，会执行生成器函数的函数体，直到`yield`表达式，该表达式指定从迭代器返回的值，或者`yield*`将值委托给另一个生成器函数。
 
