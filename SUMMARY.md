@@ -49,6 +49,7 @@
 * [JavaScript API](source-code-yuan-ma/javascript-api/README.md)
   * [数组原生API实现](source-code-yuan-ma/javascript-api/shu-zu-yuan-sheng-api-shi-xian.md)
   * [原型继承实现](source-code-yuan-ma/javascript-api/new-cao-zuo-fu-shi-xian.md)
+  * [数组去重实现](source-code-yuan-ma/javascript-api/tan-tan-shu-zu-qu-zhong.md)
   * [Promise 源码实现](source-code-yuan-ma/javascript-api/promise-shi-xian.md)
   * [apply、call、bind实现](source-code-yuan-ma/javascript-api/tan-tan-applycallbind.md)
   * [sleep 函数实现](source-code-yuan-ma/javascript-api/sleep-han-shu-shi-xian.md)
@@ -102,7 +103,6 @@
 * [Html、CSS](interview-collect/html-css.md)
 * [JavaScript](interview-collect/javascript/README.md)
   * [谈谈提升](interview-collect/javascript/tan-tan-ti-sheng.md)
-  * [谈谈数组去重](interview-collect/javascript/tan-tan-shu-zu-qu-zhong.md)
 * [浏览器](interview-collect/liu-lan-qi.md)
 * [Git](interview-collect/git.md)
 
