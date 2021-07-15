@@ -100,9 +100,7 @@
 
 ## QUESTION、收集 <a id="interview-collect"></a>
 
-* [Html、CSS](interview-collect/html-css.md)
 * [JavaScript](interview-collect/javascript/README.md)
   * [谈谈提升](interview-collect/javascript/tan-tan-ti-sheng.md)
-* [浏览器](interview-collect/liu-lan-qi.md)
 * [Git](interview-collect/git.md)
 
