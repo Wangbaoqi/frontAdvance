@@ -78,10 +78,6 @@ const ReactElement = function(type, key, ref, self, source, owner, props) {
 * config
 * children
 
-
-
-
-
 ### Component 和 PureComponent
 
 我们在日常开发定义的类组件都会继承 Component 或者 PureComponent，下面来看下这两个顶级的类内部是怎么实现的
@@ -159,7 +155,44 @@ function checkShouldComponentUpdate(
 }
 ```
 
+可以看到，React.Component 并未实现 `shouldComponentUpdate`  ，而是直接使用了子类中定义的 `shouldComponentUpdate` ，而React.pureComponent 在没有自定义`shouldComponentUpdate`的基础上实现了其功能，shallowEqual 对新老state 和 新老props 进行了浅对比。
 
+因此，当state和props是简单的数据类型的时候，才使用 React.pureComponent 。如果在纯组件中使用复杂结构时，更新用 `forceUpdate` 来确保数据对比的正确性。
+
+```javascript
+// pureComponent Test
+class PureComp extends PureComponent<Props,State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      c: {
+        maps: {
+        name: 'nate'
+      }
+    }
+  }
+  changeName = () => {
+    const { c = {} } = this.state
+    c.maps.name = 'baoqi'
+    // 这里setState 会失效 shouldComponentUpdate 中使用了浅比较
+    // 使用 forceUpdate 会跳过 shouldComponentUpdate 直接调用render
+    this.setState({
+      c
+    })
+  }
+  render() {
+    const { c = {} } = this.state
+    return (
+      <div>
+        <p>name: {c.maps.name}</p>
+        <button onClick={this.changeName}>CHANGE NAME</button>
+      </div>
+    )
+  }
+}
+```
+
+### React.memo
 
 
 

@@ -114,6 +114,74 @@ class ClassCom extends React.Component<Props, State> {
 
 ### React.pureComponent
 
+React.pureComponent 是纯组件，用法上跟React.Component基本一致，但是两个还是有一点细微的差别，在 shouldComponentUpdate 上的区别以及源码解析，详情可以到「[react 源码 - react API」](../../source-code-yuan-ma/react-17-yuan-ma/react-api.md#component-he-purecomponent)查看.
+
+### React.memo
+
+React.memo 是高阶组件，接收两个参数 `type（React元素）`，`compare` - 新老props对比函数。
+
+关于React.memo的底层实现原理可以到「react 源码 - React API」查看。
+
+```typescript
+const MyComponnet = React.memo(
+  type: ReactElementType, 
+  compare?: (oldProp, newProps) => boolean
+)
+```
+
+React.memo 重点关注的是组件的渲染是否可以记忆化，这个就要求`props`是不是变化的，如果每次传入的`props`是相同的，其渲染的结果也是相同的，那么这个组件就可以被记忆化，就不要之后的`diff`操作了，也是提升性能的一种手段。
+
+默认情况下（没有`compare`参数），在更新props的时候，对比新老props是使用的浅层对比，跟**shouldComponentUpdate**默认是否需要渲染采用的对比方式是一致的。
+
+如果想手动控制对比过程，就可以采用第二个参数 `compare` 返回值必须是`boolean` 类型的。
+
+但是不能任意的使用React.memo，否则会出现bug。
+
+只要符合**组件接收同一个props，每次输出一致**就可以使用React.memo
+
+#### 记忆化被破坏
+
+```typescript
+const Logout = (name, onLagout) => {
+  
+  return (
+    <div onClick={onLogout}>
+      Logout {name}
+    </div>
+  )
+}
+const MemoizedLogout = React.memo(Logout)
+```
+
+上面是一个登出和用户信息展示的组件，接收 `name` 和 `onLagout` ，被封装成了记忆化组件。但是父组件每次渲染的时候，Logout 组件也会渲染，没有达到记忆化组件的期望。
+
+```typescript
+const App = ({ store, cookies }) => {
+  return (
+    <div className="main">
+      <header>
+        <MemoizedLogout
+          username={store.username}
+          onLogout={() => cookies.clear('session')}
+        />
+      </header>
+      {store.content}
+    </div>
+  );
+}
+```
+
+这里存在一个问题，就是回调函数 `onLagout` ，函数本质就是对象，在浅层对比的时候，新老props是不相同的，所以会导致每次渲染。
+
+不过这个可以用Hooks中的 `useCallback` 来解决。关于Hooks，在之后会涉及到。
+
+```typescript
+ const onLogout = useCallback(
+   () => cookies.clear('session'), 
+   [cookies]
+ );
+```
+
 
 
 
