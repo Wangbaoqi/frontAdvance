@@ -115,17 +115,49 @@ function PureComponent(props, context, updater) {
   this.refs = {};
 }
 
+//避免为这些方法进行额外的原型跳转。 
 function ComponentDummy() {}
 ComponentDummy.prototype = Component.prototype;
-// TODO why this 
 const pureComponentPrototype = (PureComponent.prototype = new ComponentDummy())
 pureComponentPrototype.constructor = PureComponent;
-
 Object.assign(pureComponentPrototype, Component.prototype)
 pureComponentPrototype.isPureReactComponent = true;
 ```
 
+Component和pureComponent的定义除了pureComponent有`isPureComponent` 属性，其他基本一样。
 
+正是这个属性，在组件的生命周期钩子函数中做个区分。
+
+```javascript
+// 
+function checkShouldComponentUpdate(
+  workInProgress,
+  ctor,
+  oldProps,
+  newProps,
+  oldState,
+  newState,
+  nextContext,
+) {
+  const instance = workInProgress.stateNode;
+  if (typeof instance.shouldComponentUpdate === 'function') {
+    const shouldUpdate = instance.shouldComponentUpdate(
+      newProps,
+      newState,
+      nextContext,
+    );
+    return shouldUpdate;
+  }
+
+  // * component 和 pureComponent 之间的区别
+  if (ctor.prototype && ctor.prototype.isPureReactComponent) {
+    return (
+      !shallowEqual(oldProps, newProps) || !shallowEqual(oldState, newState)
+    );
+  }
+  return true;
+}
+```
 
 
 
