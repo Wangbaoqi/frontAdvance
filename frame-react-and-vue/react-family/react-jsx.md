@@ -120,7 +120,7 @@ React.pureComponent 是纯组件，用法上跟React.Component基本一致，但
 
 React.memo 是高阶组件，接收两个参数 `type（React元素）`，`compare` - 新老props对比函数。
 
-关于React.memo的底层实现原理可以到「react 源码 - React API」查看。
+关于React.memo的底层实现原理可以到[「react 源码 - React API」](../../source-code-yuan-ma/react-17-yuan-ma/react-api.md#react-memo)查看。
 
 ```typescript
 const MyComponnet = React.memo(
@@ -182,7 +182,124 @@ const App = ({ store, cookies }) => {
  );
 ```
 
+### React.createRef
+
+refs 提供了一种方式，可以访问DOM节点或者React元素。
+
+#### refs的主要用途：
+
+* 管理焦点，文本选择或者媒体播放
+* 触发强制动画
+* 集成第三方DOM库
+
+#### refs的使用方式
+
+![](../../.gitbook/assets/refs.png)
+
+#### refs的执行时机
+
+在组件挂载时，给`current`属性传入DOM元素或者react元素（若是回调refs，会调用ref的callback函数并传入DOM元素，当卸载时传入`null`），当卸载时，给`current`传入null ，详细的请看 「[React源码 -  React API」](../../source-code-yuan-ma/react-17-yuan-ma/react-api.md#react-createref)
+
+#### 创建Refs
+
+创建refs有以下几种方式
+
+* string ref - 已废弃
+* createRef 
+* callback Ref
+* useRef - 见hooks 
+
+```typescript
+class TestRef extends React.Component {
+  // 将ref分配给组件的实例，方便整个组件引用它
+  ref = React.createRef();
+  // callback ref
+  cbRef = null;
+  
+  constructor(props) {
+    super();
+  }
+  
+  /** callback ref 
+   * @param(el): react元素或者DOM节点
+   * 将el 存储在组件实例上
+   **/
+  refCall = (el) => {
+    this.cbRef = el
+  }
+  
+  componentDidMount() {
+    console.log(this.ref.current, 'createRef instance')
+    console.log(this.cbRef, 'callback Ref instance')
+  }
+  
+  render() {
+    return (
+      <div>
+        <input type="text" ref={this.ref} />
+        <input type="text" ref={this.refCall} />
+      </div>
+    )
+  }
+}
+```
+
+#### 使用Refs
+
+Refs的使用大致有跨层级的和不跨层级的，上述创建Refs的过程就是基于不跨层级的，下面就来看下跨层级的场景。
+
+**传递给子组件 - createRef**
+
+```typescript
+// 类子组件 函数组件同理 也是从props获取
+class Child extends React.Component {
+  render() {
+    return (
+      <input type="text" ref={this.props.refInfo}/>
+    )
+  }
+  componentDidMount() {
+    if(this.ref) this.ref.current.focus();
+  }
+}
 
 
+class App extends React.Component {
+  ref = React.createRef(); 
+  render() {
+    return (
+      <Child refInfo={this.ref}/>
+    )
+  } 
+}
+```
 
+#### 传递给子组件 - callback Ref
+
+```typescript
+
+const Child = (props) => {
+  return (
+    <input type="text" ref={(el) => props.refInfo(el)} onChange={props.onChange}/>
+  )
+}
+
+class App extends React.Component {
+  refInput = null;
+  ref = (el) => this.refInput = el; 
+  
+  changeText = () => {
+    console.log(this.refInput?.value)
+  }
+  render() {
+    return (
+      <Child refInfo={this.ref} onChange={this.changeText}/>
+    )
+  } 
+}
+```
+
+还有一种跨层级传递refs的方式 - **forwardRef 转发** 👇 
+
+### React.forwardRef
 

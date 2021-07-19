@@ -194,7 +194,82 @@ class PureComp extends PureComponent<Props,State> {
 
 ### React.memo
 
+React.memo 的使用详情可以到 [「React Family - React API」](../../frame-react-and-vue/react-family/react-jsx.md#react-memo)查看。这里着重看下源码
 
+```javascript
+function memo<Props>(
+  type: React$ElementType,
+  compare?: (oldProps: Props, newProps: Props) => boolean,
+) {
+  const elementType = {
+    $$typeof: REACT_MEMO_TYPE,
+    type,
+    compare: compare === undefined ? null : compare,
+  };
+  return elementType;
+}
+```
+
+可以看到，React.memo 接收了 `reactElement` 和 `compare`（对比新老自定义方法），返回了标识 **REACT\_MEMO\_TYPE** _的元素。_
+
+跟普通组件的差异是在调度阶段。
+
+```javascript
+// react/packages/react-reconciler/src/ReactFiberBeginWork.old.js
+function updateSimpleMemoComponent(
+  current: Fiber | null,
+  workInProgress: Fiber,
+  Component: any,
+  nextProps: any,
+  updateLanes: Lanes,
+  renderLanes: Lanes,
+): null | Fiber {
+  if (current !== null) {
+    const prevProps = current.memoizedProps;
+    // 新老props 进行浅比较 
+    if (
+      shallowEqual(prevProps, nextProps) &&
+      current.ref === workInProgress.ref &&
+    ) {
+      didReceiveUpdate = false;
+      if (!includesSomeLane(renderLanes, updateLanes)) {
+        workInProgress.lanes = current.lanes;
+        return bailoutOnAlreadyFinishedWork(
+          current,
+          workInProgress,
+          renderLanes,
+        );
+      } else if ((current.flags & ForceUpdateForLegacySuspense) !== NoFlags) {
+        didReceiveUpdate = true;
+      }
+    }
+  }
+  return updateFunctionComponent(
+    current,
+    workInProgress,
+    Component,
+    nextProps,
+    renderLanes,
+  );
+}
+```
+
+当新老`props`浅比较`shallowEqual`的结果相同时，直接执行`bailoutOnAlreadyFinishedWork`，那么当前组件就会被记忆化，因此不会进行diff操作等。
+
+### React.createRef
+
+React.createRef的源码很简单，返回带有`current`属性的对象。
+
+```javascript
+function createRef(): RefObject {
+  const refObject = {
+    current: null,
+  };
+  return refObject;
+}
+```
+
+在[「React Family - React API  React.createRef」](../../frame-react-and-vue/react-family/react-jsx.md#react-createref)中提到了Refs的执行时机
 
 
 
