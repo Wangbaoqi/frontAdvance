@@ -303,3 +303,34 @@ class App extends React.Component {
 
 ### React.forwardRef
 
+Ref 的转发也是一种将ref传递到子组件的技巧。这在可重用的组件库中是很有用的。关于源码请到「[React 源码 - React API 」](../../source-code-yuan-ma/react-17-yuan-ma/react-api.md#react-forwardref)
+
+```typescript
+const FancyButton = () => {
+  return (
+    <div className='fancyButton' ref={ref}>
+      {props.children}
+    </div>
+  )
+})
+// 通过forwardRef转发
+const FancyButtonNew = React.forwardRef((props, ref) => <FancyButton ref={ref} {...props}/>)
+
+class ForwardRefs extends React.Component {
+  ref = React.createRef<HTMLDivElement>();
+  componentDidMount() {
+    console.log(this.ref);
+  }
+  render() {
+    return (
+      <div>
+        <p>Ref forward</p>
+        <FancyButtonNew  ref={this.ref} />
+      </div>
+    )
+  }
+}
+```
+
+
+

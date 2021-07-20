@@ -271,5 +271,166 @@ function createRef(): RefObject {
 
 在[「React Family - React API  React.createRef」](../../frame-react-and-vue/react-family/react-jsx.md#react-createref)中提到了Refs的执行时机
 
+ref在定义之后，是直接绑定到组件的实例上的，这个绑定的过程是在组件挂载的时候，那什么时候将DOM元素或者React元素绑定到Ref上呢？
 
+后面在说到React任务调度的时候，会说到**Render 阶段**和**Commit 阶段**，ref的结果赋值是在**Commit阶段**，
+
+这里的ref只针对**非字符ref，也就是通过 createRef 或者 回调 Ref 创建的 Ref。**
+
+**非字符Ref是在Render阶段处理，细一点就是在 Diff 操作的时候处理，这里涉及到源码，具体的整个流程后面在React调度中会具体阐述。**
+
+#### **处理字符Ref 源码** 
+
+```javascript
+// react/packages/react-reconciler/src/ReactChildFiber.old.js
+function coerceRef(
+  returnFiber: Fiber,
+  current: Fiber | null,
+  element: ReactElement,
+) {
+  const mixedRef = element.ref;
+  if (
+    mixedRef !== null &&
+    typeof mixedRef !== 'function' &&
+    typeof mixedRef !== 'object'
+  ) {
+    if (element._owner) {
+      const owner: ?Fiber = (element._owner: any);
+      let inst;
+      if (owner) {
+        const ownerFiber = ((owner: any): Fiber);
+        inst = ownerFiber.stateNode;
+      }
+      const stringRef = '' + mixedRef;
+      // Check if previous string ref matches new string ref
+      if (
+        current !== null &&
+        current.ref !== null &&
+        typeof current.ref === 'function' &&
+        current.ref._stringRef === stringRef
+      ) {
+        return current.ref;
+      }
+      const ref = function(value) {
+        let refs = inst.refs;
+        if (refs === emptyRefsObject) {
+          // This is a lazy pooled frozen object, so we need to initialize.
+          refs = inst.refs = {};
+        }
+        if (value === null) {
+          delete refs[stringRef];
+        } else {
+          refs[stringRef] = value;
+        }
+      };
+      ref._stringRef = stringRef;
+      return ref;
+    } else {
+      // error...
+    }
+  }
+  return mixedRef;
+}
+```
+
+#### 处理非字符Ref
+
+非字符Ref是在Commit阶段处理的，下面是具体的源码
+
+```javascript
+// react/packages/react-reconciler/src/ReactFiberCommitWork.old.js
+function commitAttachRef(finishedWork: Fiber) {
+  const ref = finishedWork.ref;
+  if (ref !== null) {
+    const instance = finishedWork.stateNode;
+    let instanceToUse;
+    switch (finishedWork.tag) {
+      case HostComponent:
+        // 获取DOM几点
+        instanceToUse = getPublicInstance(instance);
+        break;
+      default:
+        instanceToUse = instance;
+    }
+    // Moved outside to ensure DCE works with this flag
+    if (enableScopeAPI && finishedWork.tag === ScopeComponent) {
+      instanceToUse = instance;
+    }
+    // ref 是callback 的情况
+    if (typeof ref === 'function') {
+      if (
+        enableProfilerTimer &&
+        enableProfilerCommitHooks &&
+        finishedWork.mode & ProfileMode
+      ) {
+        try {
+          startLayoutEffectTimer();
+          ref(instanceToUse);
+        } finally {
+          recordLayoutEffectDuration(finishedWork);
+        }
+      } else {
+        ref(instanceToUse);
+      }
+    } else {
+      ref.current = instanceToUse;
+    }
+  }
+}
+```
+
+`commitAttachRef` 接收带有Ref的组件（这里是Fiber节点）
+
+如果是通过`createRef`创建的Ref，获取其DOM节点，赋值给`current`属性。
+
+如果是通过`callback` 创建的Ref，执行回调函数，将DOM节点作为回调函数的参数。
+
+#### 组件卸载时卸载Ref
+
+在组件卸载是，ref 同样被卸载，`createRef` 和 `callback` 都会传入`null` 来卸载。
+
+```javascript
+// react/packages/react-reconciler/src/ReactFiberCommitWork.old.js
+function commitDetachRef(current: Fiber) {
+  const currentRef = current.ref;
+  if (currentRef !== null) {
+    if (typeof currentRef === 'function') {
+      if (
+        enableProfilerTimer &&
+        enableProfilerCommitHooks &&
+        current.mode & ProfileMode
+      ) {
+        try {
+          startLayoutEffectTimer();
+          currentRef(null);
+        } finally {
+          recordLayoutEffectDuration(current);
+        }
+      } else {
+        currentRef(null);
+      }
+    } else {
+      currentRef.current = null;
+    }
+  }
+}
+```
+
+### React.forwardRef
+
+React.forwardRef 接收一个函数为参数，返回一个reeee 回调函数接收 props 和 ref ，
+
+
+
+```javascript
+function forwardRef<Props, ElementType: React$ElementType>(
+  render: (props: Props, ref: React$Ref<ElementType>) => React$Node,
+) {
+  const elementType = {
+    $$typeof: REACT_FORWARD_REF_TYPE,
+    render,
+  };
+  return elementType;
+}
+```
 
