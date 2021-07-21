@@ -418,9 +418,7 @@ function commitDetachRef(current: Fiber) {
 
 ### React.forwardRef
 
-React.forwardRef 接收一个函数为参数，返回一个reeee 回调函数接收 props 和 ref ，
-
-
+React.forwardRef 接收一个函数为参数，返回一个REACT\_FORWARD\_REF\_TYPE类型的对象。 回调函数接收 props 和 ref ，
 
 ```javascript
 function forwardRef<Props, ElementType: React$ElementType>(
@@ -433,4 +431,70 @@ function forwardRef<Props, ElementType: React$ElementType>(
   return elementType;
 }
 ```
+
+在React任务调度过程中，如果解析到了类型为REACT\_FORWARD\_REF\_TYPE的组件时候就会执行转发Refs的逻辑，进入到`updateForwardRef`  函数中。接收参数 Component 就是React.forwardRef 创建的元素。 
+
+接下来获取到了当前Fiber节点上的ref，此时为空的ref。
+
+```javascript
+// beginWork 
+// react/packages/react-reconciler/src/ReactFiberBeginWork.old.js
+function updateForwardRef(
+  current: Fiber | null,
+  workInProgress: Fiber,
+  Component: any,
+  nextProps: any,
+  renderLanes: Lanes,
+) {
+  
+  const render = Component.render;
+  const ref = workInProgress.ref;
+
+  let nextChildren;
+  prepareToReadContext(workInProgress, renderLanes);
+  if (__DEV__) {
+    // ...
+  } else {
+    nextChildren = renderWithHooks(
+      current,
+      workInProgress,
+      render,
+      nextProps,
+      ref,
+      renderLanes,
+    );
+  }
+
+  if (current !== null && !didReceiveUpdate) {
+    bailoutHooks(current, workInProgress, renderLanes);
+    return bailoutOnAlreadyFinishedWork(current, workInProgress, renderLanes);
+  }
+
+  // React DevTools reads this flag.
+  workInProgress.flags |= PerformedWork;
+  reconcileChildren(current, workInProgress, nextChildren, renderLanes);
+  return workInProgress.child;
+}
+```
+
+接下来调用 `renderWithHooks` ，执行`render`方法，返回的是forwardRef中回调函数返回的组件，作为当前fiber节点的子fiber节点。
+
+```javascript
+function renderWithHooks<Props, SecondArg>(
+  current: Fiber | null,
+  workInProgress: Fiber,
+  Component: (p: Props, arg: SecondArg) => any,
+  props: Props,
+  secondArg: SecondArg,
+  nextRenderLanes: Lanes,
+): any {
+  // ...
+  // props secondArg = ref
+  let children = Component(props, secondArg);
+  // ...
+  return children;
+}
+```
+
+最后ref的赋值也是在Commit阶段，跟createRef是一致的。
 

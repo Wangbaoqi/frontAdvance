@@ -332,5 +332,9 @@ class ForwardRefs extends React.Component {
 }
 ```
 
+### React.lazy
+
+
+
 
 
