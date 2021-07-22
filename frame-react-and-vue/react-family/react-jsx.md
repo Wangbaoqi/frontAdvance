@@ -334,7 +334,47 @@ class ForwardRefs extends React.Component {
 
 ### React.lazy
 
+React.lazy 允许定义一个可以动态加载的组件，这样可以减少bundle的体积，可以进行延迟加载初次未使用到组件
 
+React.lazy 接收一个函数，该函数动态调用`import()`，必须返回一个`Promise`，该`Promise`需要一个`resolve`一个**`default`** `export` 的组件。然后必须应用在**Suspense**组件中。
+
+```typescript
+import React from 'react'
+
+const CustomComponent = React.lazy(() => import('./Header'))
+const LazyCom = () => {
+  return (
+    <React.Suspense fallback={'loading'}>
+      <CustomComponent />
+    </React.Suspense>
+  )
+}
+```
+
+如果动态引入组件出现异常，可以使用**边界异常捕获**来处理。
+
+动态组件一般在路由中使用，这样在用户体验方面得到一定的提升。源码请看「React 源码 - React API」
+
+### React.Suspense
+
+React.Suspense 可以指定一个加载指示器，以防组件树中的子组件没有具备渲染的能力。
+
+目前，懒加载组件是加载指示器的唯一用例
+
+```typescript
+import React from 'react'
+
+const CustomComponent = React.lazy(() => import('./Header'))
+const LazyCom = () => {
+  return (
+    <React.Suspense fallback={'loading'}>
+      <CustomComponent />
+    </React.Suspense>
+  )
+}
+```
+
+React.Suspense 接收`fallback`属性，其值就是加载指示器的内容。
 
 
 

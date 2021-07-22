@@ -498,3 +498,32 @@ function renderWithHooks<Props, SecondArg>(
 
 最后ref的赋值也是在Commit阶段，跟createRef是一致的。
 
+### React.lazy
+
+React.lazy 源码定义直接返回一个带有类型的REACT\_LAZY\_TYPE的对象
+
+```javascript
+function lazy<T>(
+  ctor: () => Thenable<{default: T, ...}>,
+): LazyComponent<T, Payload<T>> {
+  const payload: Payload<T> = {
+    _status: -1,
+    _result: ctor,
+  };
+
+  const lazyType: LazyComponent<T, Payload<T>> = {
+    $$typeof: REACT_LAZY_TYPE,
+    _payload: payload,
+    _init: lazyInitializer,
+  };
+
+  return lazyType;
+}
+```
+
+接收函数为参数，返回一个具有**Thenable**接口的`Promise`
+
+
+
+
+
