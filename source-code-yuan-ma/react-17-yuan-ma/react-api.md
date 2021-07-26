@@ -192,6 +192,10 @@ class PureComp extends PureComponent<Props,State> {
 }
 ```
 
+下图为组件钩子函数在Fiber调度过程中执行的时机和顺序
+
+![](../../.gitbook/assets/image%20%282%29.png)
+
 ### React.memo
 
 React.memo 的使用详情可以到 [「React Family - React API」](../../frame-react-and-vue/react-family/react-jsx.md#react-memo)查看。这里着重看下源码
@@ -521,7 +525,7 @@ function lazy<T>(
 }
 ```
 
-接收函数为参数，返回一个具有**Thenable**接口的`Promise`
+接收函数为参数，也就是 `() => import('../')` ，`import` 返回一个`Promise`， 也就是返回一个具有**Thenable**接口的`Promise`
 
 ```javascript
 function lazyInitializer<T>(payload: Payload<T>): T {
@@ -560,13 +564,58 @@ function lazyInitializer<T>(payload: Payload<T>): T {
 }
 ```
 
+在构建`workInProgress` **Lazy** **Fiber** 树的时候，执行`mountLazyComponent` ，在执行到 `init(payload)`  ,进入`LazyInitializer`  。
 
+在首次加载时，`LazyInitializer`  会抛出异常，先完成一轮Fiber 树的render 和 commit，此时页面展示的是`suspense` 的`fallback` 内容， 由于Lazy组件返回的是`promise`, 第二轮构建Fiber树执行的是`promise.then` 中动态加载的组件。
+
+```javascript
+function mountLazyComponent(
+  _current,
+  workInProgress,
+  elementType,
+  updateLanes,
+  renderLanes,
+) {
+  if (_current !== null) {
+    _current.alternate = null;
+    workInProgress.alternate = null;
+    workInProgress.flags |= Placement;
+  }
+
+  
+  const lazyComponent: LazyComponentType<any, any> = elementType;
+  
+  // 获取 并且执行 lazyInitializer 
+  const payload = lazyComponent._payload;
+  const init = lazyComponent._init;
+  let Component = init(payload);
+  
+  // 解析动态加载的组件的类型
+  const resolvedTag = (workInProgress.tag = resolveLazyComponentTag(Component));
+  const resolvedProps = resolveDefaultProps(Component, props);
+  
+  let child;
+  
+  switch (resolvedTag) {
+    // 根据返回的组件类型执行更新
+    default: {
+      // warning
+    }
+  }
+  return child;
+  
+}
+```
 
 ### React.Suspense 
 
+结合React.Lazy，React.Suspense 首次执行 `mountSuspensePrimaryChildren` 创建 `createFiberFromOffscreen` 组件，作为当前Fiber节点的子Fiber 。
 
+当Lazy组件执行异步的异常状态中，再次构建Fiber树时，React.Suspense 执行`mountSuspenseFallbackChildren` 创建fallback 的Fiber节点，作为当前Suspense组件的子Fiber，然后commit阶段，展示`fallback` 内容。
 
+由于Lazy返回的是一个promise，那何时去执行其回调，这个就涉及到了Fiber 的优先级了，后面再述。
 
+当计算出回调的有优先级后，执行回调，而构建Fiber树的流程则重新开始，执行到了Suspense组件case时，`updateSuspenseComponent` 就进入了update阶段，之后就开始构建动态加载的组件了
 
 ```javascript
 
@@ -576,43 +625,11 @@ function updateSuspenseComponent(current, workInProgress, renderLanes) {
   let showFallback = false;
   const didSuspend = (workInProgress.flags & DidCapture) !== NoFlags;
 
-  if (
-    didSuspend ||
-    shouldRemainOnFallback(
-      suspenseContext,
-      current,
-      workInProgress,
-      renderLanes,
-    )
-  ) {
-    // Something in this boundary's subtree already suspended. Switch to
-    // rendering the fallback children.
-    showFallback = true;
-    workInProgress.flags &= ~DidCapture;
-  } else {
-    // Attempting the main content
-    if (
-      current === null ||
-      (current.memoizedState: null | SuspenseState) !== null
-    ) {
-      if (
-        nextProps.fallback !== undefined &&
-        nextProps.unstable_avoidThisFallback !== true
-      ) {
-        suspenseContext = addSubtreeSuspenseContext(
-          suspenseContext,
-          InvisibleParentSuspenseContext,
-        );
-      }
-    }
-  }
-  suspenseContext = setDefaultShallowSuspenseContext(suspenseContext);
-  pushSuspenseContext(workInProgress, suspenseContext);
-
   if (current === null) {
 
     const nextPrimaryChildren = nextProps.children;
     const nextFallbackChildren = nextProps.fallback;
+    // mount fallback 显示
     if (showFallback) {
       const fallbackFragment = mountSuspenseFallbackChildren(
         workInProgress,
@@ -620,32 +637,12 @@ function updateSuspenseComponent(current, workInProgress, renderLanes) {
         nextFallbackChildren,
         renderLanes,
       );
-      const primaryChildFragment: Fiber = (workInProgress.child: any);
-      primaryChildFragment.memoizedState = mountSuspenseOffscreenState(
-        renderLanes,
-      );
-      workInProgress.memoizedState = SUSPENDED_MARKER;
       return fallbackFragment;
     } else if (typeof nextProps.unstable_expectedLoadTime === 'number') {
-      // This is a CPU-bound tree. Skip this tree and show a placeholder to
-      // unblock the surrounding content. Then immediately retry after the
-      // initial commit.
-      const fallbackFragment = mountSuspenseFallbackChildren(
-        workInProgress,
-        nextPrimaryChildren,
-        nextFallbackChildren,
-        renderLanes,
-      );
-      const primaryChildFragment: Fiber = (workInProgress.child: any);
-      primaryChildFragment.memoizedState = mountSuspenseOffscreenState(
-        renderLanes,
-      );
-      workInProgress.memoizedState = SUSPENDED_MARKER;
+      // This is a CPU-bound tree. 
 
-      workInProgress.lanes = SomeRetryLane;
-      return fallbackFragment;
     } else {
-      
+      // mount 
       return mountSuspensePrimaryChildren(
         workInProgress,
         nextPrimaryChildren,
@@ -654,9 +651,6 @@ function updateSuspenseComponent(current, workInProgress, renderLanes) {
     }
   } else {
     // This is an update.
-
-    // If the current fiber has a SuspenseState, that means it's already showing
-    // a fallback.
     const prevState: null | SuspenseState = current.memoizedState;
     if (prevState !== null) {
       // The current tree is already showing a fallback
@@ -676,18 +670,7 @@ function updateSuspenseComponent(current, workInProgress, renderLanes) {
           nextFallbackChildren,
           renderLanes,
         );
-        const primaryChildFragment: Fiber = (workInProgress.child: any);
-        const prevOffscreenState: OffscreenState | null = (current.child: any)
-          .memoizedState;
-        primaryChildFragment.memoizedState =
-          prevOffscreenState === null
-            ? mountSuspenseOffscreenState(renderLanes)
-            : updateSuspenseOffscreenState(prevOffscreenState, renderLanes);
-        primaryChildFragment.childLanes = getRemainingWorkInPrimaryTree(
-          current,
-          renderLanes,
-        );
-        workInProgress.memoizedState = SUSPENDED_MARKER;
+        
         return fallbackChildFragment;
       } else {
         const nextPrimaryChildren = nextProps.children;
@@ -702,74 +685,45 @@ function updateSuspenseComponent(current, workInProgress, renderLanes) {
       }
     } else {
       // The current tree is not already showing a fallback.
-      if (showFallback) {
-        // Timed out.
-        const nextFallbackChildren = nextProps.fallback;
-        const nextPrimaryChildren = nextProps.children;
-        const fallbackChildFragment = updateSuspenseFallbackChildren(
-          current,
-          workInProgress,
-          nextPrimaryChildren,
-          nextFallbackChildren,
-          renderLanes,
-        );
-        const primaryChildFragment: Fiber = (workInProgress.child: any);
-        const prevOffscreenState: OffscreenState | null = (current.child: any)
-          .memoizedState;
-        primaryChildFragment.memoizedState =
-          prevOffscreenState === null
-            ? mountSuspenseOffscreenState(renderLanes)
-            : updateSuspenseOffscreenState(prevOffscreenState, renderLanes);
-        primaryChildFragment.childLanes = getRemainingWorkInPrimaryTree(
-          current,
-          renderLanes,
-        );
-        // Skip the primary children, and continue working on the
-        // fallback children.
-        workInProgress.memoizedState = SUSPENDED_MARKER;
-        return fallbackChildFragment;
-      } else {
-        // Still haven't timed out. Continue rendering the children, like we
-        // normally do.
-        const nextPrimaryChildren = nextProps.children;
-        const primaryChildFragment = updateSuspensePrimaryChildren(
-          current,
-          workInProgress,
-          nextPrimaryChildren,
-          renderLanes,
-        );
-        workInProgress.memoizedState = null;
-        return primaryChildFragment;
-      }
+      
     }
   }
 }
 ```
 
-
-
-
+ensureRootIsScheduled 是当前同步代码执行完成之后，整理出当前一轮出现的异步代码，根据优先级，重新进行调度Fiber，渲染其UI。
 
 ```javascript
-function mountSuspensePrimaryChildren(
-  workInProgress,
-  primaryChildren,
-  renderLanes,
-) {
-  const mode = workInProgress.mode;
-  const primaryChildProps: OffscreenProps = {
-    mode: 'visible',
-    children: primaryChildren,
-  };
-  const primaryChildFragment = createFiberFromOffscreen(
-    primaryChildProps,
-    mode,
-    renderLanes,
-    null,
-  );
-  primaryChildFragment.return = workInProgress;
-  workInProgress.child = primaryChildFragment;
-  return primaryChildFragment;
+// react/packages/react-reconciler/src/ReactFiberWorkLoop.old.js
+function ensureRootIsScheduled(root: FiberRoot, currentTime: number) {
+  
+  // Schedule a new callback.
+  let newCallbackNode;
+  // 同步执行的优先级
+  if (newCallbackPriority === SyncLane) {
+    // Special case: Sync React callbacks are scheduled on a special
+    // internal queue
+    if (root.tag === LegacyRoot) {
+      scheduleLegacySyncCallback(performSyncWorkOnRoot.bind(null, root));
+    } else {
+      scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root));
+    }
+    if (supportsMicrotasks) {
+      // Flush the queue in a microtask.
+      scheduleMicrotask(flushSyncCallbacks);
+    } else {
+      // Flush the queue in an Immediate task.
+      scheduleCallback(ImmediateSchedulerPriority, flushSyncCallbacks);
+    }
+    newCallbackNode = null;
+  } else {
+    // 不同的优先级处理
+  }
+
+  root.callbackPriority = newCallbackPriority;
+  root.callbackNode = newCallbackNode;
 }
 ```
+
+
 

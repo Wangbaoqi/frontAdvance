@@ -23,10 +23,6 @@
 * 单一职责原则\(每个组件只做一件事，组件变的复杂，可以拆分\)
 * 尽量无状态原则\(组件所需数据尽量通过props传入，提高复用性，这种组件也可以说是 Pure 或者 Dumb 组件\)
 
-**受控组件** 这两中一般在表单元素中使用的多 受控组件一般是由使用者控制维护 ![react-component](https://raw.githubusercontent.com/Wangbaoqi/blogImgs/master/nateImgs/react/component_1.png)
-
-非受控组件一般是由DOM自身维护 **和非受控组件** ![react-component](https://raw.githubusercontent.com/Wangbaoqi/blogImgs/master/nateImgs/react/component_2.png)
-
 #### React 组件的生命周期
 
 在掌握的react的生命周期之前可以看下生命周期图谱
@@ -54,13 +50,13 @@
 * [getSnapshotBeforeUpdate\(\)](https://zh-hans.reactjs.org/docs/react-component.html#getsnapshotbeforeupdate)
 * [**componentDidUpdate\(\)**](https://zh-hans.reactjs.org/docs/react-component.html#componentdidupdate)
 
-::: warning 注意： componentWillUpdate componentWillReciveProps 钩子即将过时，避免使用 :::
+warning 注意： `componentWillUpdate` `componentWillReceiveProps` 钩子即将过时，避免使用 
 
 **组件卸载**
 
 当组件从DOM树中移除时，调用此钩子函数
 
-* \*\*[componentWillUnmount\(\)](https://zh-hans.reactjs.org/docs/react-component.html#componentwillunmount)
+* [componentWillUnmount\(\)](https://zh-hans.reactjs.org/docs/react-component.html#componentwillunmount)
 
 **错误处理**
 
@@ -135,40 +131,23 @@ class Comment extends Component {
 }
 ```
 
-### PureComponent
+### 受控组件 VS 非受控组件
 
-定制了shouldComponentUpdate后的component --- 浅比较
+**受控组件** 这两中一般在表单元素中使用的多 受控组件一般是由使用者控制维护 
 
-```javascript
-class comp extends React.PureComponent {
-  // TODO
-}
-```
+![react-component](https://raw.githubusercontent.com/Wangbaoqi/blogImgs/master/nateImgs/react/component_1.png)
 
-改造上个组件Comment
+_非受控组件_一般是由DOM自身维护 
 
-```javascript
-// 使用PureComponent
-class Commentp extends React.PureComponent {
-  render() {
-    const { name, content} = this.props
-    return (
-      <div>
-        {name} - {content}
-      </div>
-    )
-  }
-}
-```
+![react-component](https://raw.githubusercontent.com/Wangbaoqi/blogImgs/master/nateImgs/react/component_2.png)
 
-**原则**
 
-* 确保数据类型是值类型
-* 如果是引用类型，确保地址不变，或者确保不是深层次的嵌套 
 
-**解决深层嵌套的方法：** 解套 {...obj}
+### 高阶组件
 
-### React.memo
 
-React v16.6.0 之后的版本 可以使用一个新功能 React.memo来完美React 组件。让函数式的组件，也有了PureComponent的功能
+
+### 组件化开发
+
+
 
