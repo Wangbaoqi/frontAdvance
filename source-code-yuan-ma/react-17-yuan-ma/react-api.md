@@ -523,7 +523,253 @@ function lazy<T>(
 
 接收函数为参数，返回一个具有**Thenable**接口的`Promise`
 
+```javascript
+function lazyInitializer<T>(payload: Payload<T>): T {
+  if (payload._status === Uninitialized) {
+    const ctor = payload._result;
+    const thenable = ctor();
+    // Transition to the next state.
+    const pending: PendingPayload = (payload: any);
+    pending._status = Pending;
+    pending._result = thenable;
+    thenable.then(
+      moduleObject => {
+        if (payload._status === Pending) {
+          const defaultExport = moduleObject.default;
+          // Transition to the next state.
+          const resolved: ResolvedPayload<T> = (payload: any);
+          resolved._status = Resolved;
+          resolved._result = defaultExport;
+        }
+      },
+      error => {
+        if (payload._status === Pending) {
+          // Transition to the next state.
+          const rejected: RejectedPayload = (payload: any);
+          rejected._status = Rejected;
+          rejected._result = error;
+        }
+      },
+    );
+  }
+  if (payload._status === Resolved) {
+    return payload._result;
+  } else {
+    throw payload._result;
+  }
+}
+```
 
 
 
+### React.Suspense 
+
+
+
+
+
+```javascript
+
+function updateSuspenseComponent(current, workInProgress, renderLanes) {
+  const nextProps = workInProgress.pendingProps;
+  let suspenseContext: SuspenseContext = suspenseStackCursor.current;
+  let showFallback = false;
+  const didSuspend = (workInProgress.flags & DidCapture) !== NoFlags;
+
+  if (
+    didSuspend ||
+    shouldRemainOnFallback(
+      suspenseContext,
+      current,
+      workInProgress,
+      renderLanes,
+    )
+  ) {
+    // Something in this boundary's subtree already suspended. Switch to
+    // rendering the fallback children.
+    showFallback = true;
+    workInProgress.flags &= ~DidCapture;
+  } else {
+    // Attempting the main content
+    if (
+      current === null ||
+      (current.memoizedState: null | SuspenseState) !== null
+    ) {
+      if (
+        nextProps.fallback !== undefined &&
+        nextProps.unstable_avoidThisFallback !== true
+      ) {
+        suspenseContext = addSubtreeSuspenseContext(
+          suspenseContext,
+          InvisibleParentSuspenseContext,
+        );
+      }
+    }
+  }
+  suspenseContext = setDefaultShallowSuspenseContext(suspenseContext);
+  pushSuspenseContext(workInProgress, suspenseContext);
+
+  if (current === null) {
+
+    const nextPrimaryChildren = nextProps.children;
+    const nextFallbackChildren = nextProps.fallback;
+    if (showFallback) {
+      const fallbackFragment = mountSuspenseFallbackChildren(
+        workInProgress,
+        nextPrimaryChildren,
+        nextFallbackChildren,
+        renderLanes,
+      );
+      const primaryChildFragment: Fiber = (workInProgress.child: any);
+      primaryChildFragment.memoizedState = mountSuspenseOffscreenState(
+        renderLanes,
+      );
+      workInProgress.memoizedState = SUSPENDED_MARKER;
+      return fallbackFragment;
+    } else if (typeof nextProps.unstable_expectedLoadTime === 'number') {
+      // This is a CPU-bound tree. Skip this tree and show a placeholder to
+      // unblock the surrounding content. Then immediately retry after the
+      // initial commit.
+      const fallbackFragment = mountSuspenseFallbackChildren(
+        workInProgress,
+        nextPrimaryChildren,
+        nextFallbackChildren,
+        renderLanes,
+      );
+      const primaryChildFragment: Fiber = (workInProgress.child: any);
+      primaryChildFragment.memoizedState = mountSuspenseOffscreenState(
+        renderLanes,
+      );
+      workInProgress.memoizedState = SUSPENDED_MARKER;
+
+      workInProgress.lanes = SomeRetryLane;
+      return fallbackFragment;
+    } else {
+      
+      return mountSuspensePrimaryChildren(
+        workInProgress,
+        nextPrimaryChildren,
+        renderLanes,
+      );
+    }
+  } else {
+    // This is an update.
+
+    // If the current fiber has a SuspenseState, that means it's already showing
+    // a fallback.
+    const prevState: null | SuspenseState = current.memoizedState;
+    if (prevState !== null) {
+      // The current tree is already showing a fallback
+
+      // Special path for hydration
+      if (enableSuspenseServerRenderer) {
+        // ...
+      }
+
+      if (showFallback) {
+        const nextFallbackChildren = nextProps.fallback;
+        const nextPrimaryChildren = nextProps.children;
+        const fallbackChildFragment = updateSuspenseFallbackChildren(
+          current,
+          workInProgress,
+          nextPrimaryChildren,
+          nextFallbackChildren,
+          renderLanes,
+        );
+        const primaryChildFragment: Fiber = (workInProgress.child: any);
+        const prevOffscreenState: OffscreenState | null = (current.child: any)
+          .memoizedState;
+        primaryChildFragment.memoizedState =
+          prevOffscreenState === null
+            ? mountSuspenseOffscreenState(renderLanes)
+            : updateSuspenseOffscreenState(prevOffscreenState, renderLanes);
+        primaryChildFragment.childLanes = getRemainingWorkInPrimaryTree(
+          current,
+          renderLanes,
+        );
+        workInProgress.memoizedState = SUSPENDED_MARKER;
+        return fallbackChildFragment;
+      } else {
+        const nextPrimaryChildren = nextProps.children;
+        const primaryChildFragment = updateSuspensePrimaryChildren(
+          current,
+          workInProgress,
+          nextPrimaryChildren,
+          renderLanes,
+        );
+        workInProgress.memoizedState = null;
+        return primaryChildFragment;
+      }
+    } else {
+      // The current tree is not already showing a fallback.
+      if (showFallback) {
+        // Timed out.
+        const nextFallbackChildren = nextProps.fallback;
+        const nextPrimaryChildren = nextProps.children;
+        const fallbackChildFragment = updateSuspenseFallbackChildren(
+          current,
+          workInProgress,
+          nextPrimaryChildren,
+          nextFallbackChildren,
+          renderLanes,
+        );
+        const primaryChildFragment: Fiber = (workInProgress.child: any);
+        const prevOffscreenState: OffscreenState | null = (current.child: any)
+          .memoizedState;
+        primaryChildFragment.memoizedState =
+          prevOffscreenState === null
+            ? mountSuspenseOffscreenState(renderLanes)
+            : updateSuspenseOffscreenState(prevOffscreenState, renderLanes);
+        primaryChildFragment.childLanes = getRemainingWorkInPrimaryTree(
+          current,
+          renderLanes,
+        );
+        // Skip the primary children, and continue working on the
+        // fallback children.
+        workInProgress.memoizedState = SUSPENDED_MARKER;
+        return fallbackChildFragment;
+      } else {
+        // Still haven't timed out. Continue rendering the children, like we
+        // normally do.
+        const nextPrimaryChildren = nextProps.children;
+        const primaryChildFragment = updateSuspensePrimaryChildren(
+          current,
+          workInProgress,
+          nextPrimaryChildren,
+          renderLanes,
+        );
+        workInProgress.memoizedState = null;
+        return primaryChildFragment;
+      }
+    }
+  }
+}
+```
+
+
+
+
+
+```javascript
+function mountSuspensePrimaryChildren(
+  workInProgress,
+  primaryChildren,
+  renderLanes,
+) {
+  const mode = workInProgress.mode;
+  const primaryChildProps: OffscreenProps = {
+    mode: 'visible',
+    children: primaryChildren,
+  };
+  const primaryChildFragment = createFiberFromOffscreen(
+    primaryChildProps,
+    mode,
+    renderLanes,
+    null,
+  );
+  primaryChildFragment.return = workInProgress;
+  workInProgress.child = primaryChildFragment;
+  return primaryChildFragment;
+}
+```
 
