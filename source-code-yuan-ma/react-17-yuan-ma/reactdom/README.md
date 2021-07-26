@@ -1,4 +1,4 @@
-# ReactDOM
+# Fiber 数据结构
 
 在**ReactDOM**中，使用最多的无疑是 `render` API，这也是整个应用第一次渲染的入口方法，下面逐一分析下这个`render`方法中做了什么操作。
 
