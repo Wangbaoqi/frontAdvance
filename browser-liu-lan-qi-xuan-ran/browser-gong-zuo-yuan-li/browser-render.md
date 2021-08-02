@@ -8,7 +8,7 @@
 
 浏览器多进程架构中，浏览器进程负责用户交互、处理输入信息，管理子进程等。这里UI线程是浏览器进程中的线程，是处理用户输入的。接下来逐一分析每一个过程。
 
-### 页面加载
+## 页面加载
 
 页面加载分为以下一个过程：
 
@@ -28,7 +28,7 @@
 
 在请求到的新页面替换当前页面之前，当前页面会执行一次 beforeUnload事件，清除当前页面的数据。或者询问用户是否需要离开当前页面，如果拒绝离开当前，浏览器则不会进行后续的操作。如果同意离开，就进入了请求URL的过程。
 
-### URL请求过程
+## URL请求过程
 
 此时浏览器进程跟网络进程进行**进程之间通信（IPC）**，将URL请求发送到网络进程，在网络进程中开始了真正的请求。这个就是Client和Server进行网络的交互的过程，也是HTTP请求的过程。有以下几个步骤：
 
@@ -54,7 +54,7 @@
 
 如果是`Content-Type: text/html` 的类型，则说明是HTML文件，继续导航过程。
 
-### 准备渲染进程
+## 准备渲染进程
 
 该过程就是在开始渲染页面之前，提前准备好渲染进程，以便后续渲染流程顺利进行。
 
@@ -69,7 +69,7 @@ https://www.wangbaoqi.com
 
 类似上面地址，这两个地址是同一站点，所以共用一个渲染进程。
 
-### 提交导航
+## 提交导航
 
 渲染进程准备好之后，浏览器进程向渲染进程提交网络进程接收到的响应体（HTML数据）。
 
@@ -80,9 +80,11 @@ https://www.wangbaoqi.com
 
 这也就是为什么打开一个页面会有一个加载的过程，到此为止，导航过程就结束了，接下来到了渲染过程，也就是最重要的一个环节，这个也是浏览器内核所做的事情。
 
-### 渲染阶段
+## 渲染阶段
 
-渲染阶段就就会开始页面解析以及子资源加载，一旦页面生成，就会向浏览器进程发送消息，浏览器进程接收到消息之后，就会停止加载动画。接下来详细阐述下这个过程。。
+渲染阶段就就会开始页面解析以及子资源加载，一旦页面生成，就会向浏览器进程发送消息，浏览器进程接收到消息之后，就会停止加载动画。接下来详细阐述下整个过程
+
+![](../../.gitbook/assets/image%20%2818%29.png)
 
 当网络进程将URL请求的响应通过消息管道传输到渲染进程之后，渲染进程就会开始解析响应数据（也就是HTML文件\)。
 
@@ -121,13 +123,15 @@ https://www.wangbaoqi.com
 * 构建DOM
 * 样式计算
 * 布局阶段
-* 分层
+  * 创建布局树
+  * 计算几何位置
+* 分层阶段
 * 绘制
-* 分块
-* 光栅化
+  * 生成绘制顺序
 * 合成
+  * 光栅化
 
-### 渲染阶段 - DOM 树
+### 构建DOM树
 
 DOM树是浏览器能够理解的数据结构，因此需要将HTML解析成DOM树（其实是数据结构中的 **树** ）。
 
@@ -137,13 +141,91 @@ DOM树的形式是**JavaScript对象**，因此可以用JS来修改节点的属�
 
 DOM树是由**HTML 解析器**将HTML解析完成的。在[「HTML - 解析HTML文档」](../../html/parse-html.md)会详细说到如何将HTML解析成DOM树的。
 
-### 渲染阶段 - 样式计算
+在解析HTML的过程中，可能会加载一些图片、CSS或者JavaScript的子资源，但是为了提高速度，渲染引擎会提供**预加载扫描器，**让类似图片、CSS的这些资源并行加载。
+
+如果入到了**script**标签，则会阻塞HTML的解析，因为JavaScript有可以操作DOM的能力，有可能会改变DOM的结构，因此，遇到script标签，则一定会加载、解析以及执行JS，结束之后继续解析HTML。除此之外，可以使用`script`的属性[`async`](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/script)和[`defer`](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/script) 来异步加载脚本和执行脚本，而且不会阻止解析。或者可以使用[JavaScript模块](https://v8.dev/features/modules)。
+
+### 样式计算
 
 样式计算就是计算出DOM树中每个节点的样式。
 
-首先，将纯文本CSS转换成浏览器能够理解的格式 - **styleSheets。**这些纯文本CSS引入方式有**外部引入Link、style 内联**以及**style属性内嵌。**
+**首先**，将纯文本CSS转换成浏览器能够理解的格式 - **styleSheets。**这些纯文本CSS引入方式有**外部引入Link、style 内联**以及**style属性内嵌。**
 
 ![](../../.gitbook/assets/image%20%2813%29.png)
+
+**其次，转换样式表中的属性值，使其标准化。**
+
+比如将rem、em转化成`px`，将`color`转换成`rgb` 等。
+
+最后，计算每个DOM节点的样式，这里涉及到了CSS层叠规则和继承规则。得到了有节点样式的DOM树。
+
+### 布局阶段
+
+现在有了有样式的DOM，接下来计算DOM树节点的几何位置，这个过程是布局阶段。
+
+布局阶段有**创建布局树**和**布局计算。**
+
+#### **创建布局树**
+
+这个过程新建一课树，只包含**可见的DOM节点**的DOM树，该树为布局树。
+
+![](../../.gitbook/assets/image%20%2817%29.png)
+
+在创建布局树过程，遍历DOM树，将可见的DOM节点添加到布局树中，不可见的节点会被布局树忽略掉。
+
+**不可见的节点**大概有`display:none` 、`visibility`以及`opacity` 
+
+这三者的区别，只有**display**在布局阶段不会添加到布局树中。其他两者都会存在于布局树中。
+
+#### 布局计算
+
+有了完整的布局树之后，然后需要计算布局树中每个节点的几何位置了。
+
+
+
+### **分层阶段**
+
+由于页面有可能会有比较复杂的样式，比如3D动画、页面滚动以及**z-index**等。为了方便实现这些效果，**渲染引擎为这样的节点实现了专门的图层，并且生成了图层树。**
+
+![](../../.gitbook/assets/image%20%2815%29.png)
+
+可以看到，当元素具备一定的特性的时候，就会生成单独的图层。当元素具有以下特性时，就会生成单独的图层。
+
+#### 具有层叠上下文的元素会被提升为单独的一层
+
+层叠上下文，满足以下任一条件的元素：
+
+1. 文档根元素 `<html>` 
+2. `position` 值为 `absolute`（绝对定位）或  `relative`（相对定位）且 `z-index` 值不为 `auto` 的元素
+3. `position` 值为 `fixed`（固定定位）或 `sticky`（粘滞定位）的元素（沾滞定位适配所有移动设备上的浏览器，但老的桌面浏览器不支持）
+4. flex `flexbox`  容器的子元素，且 `z-index` 值不为 `auto` 
+5. [`grid`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/grid) 容器的子元素，且 `z-index` 值不为 `auto` 
+6. [`opacity`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/opacity) 属性值小于 `1` 的元素
+7. 以下任意属性值不为 `none` 的元素：
+   * [`transform`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/transform)
+   * [`filter`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/filter)
+   * [`perspective`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/perspective)
+   * [`clip-path`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/clip-path)
+   * [`mask`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/mask) / [`mask-image`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/mask-image) / [`mask-border`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/mask-border)
+8. [`-webkit-overflow-scrolling`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/-webkit-overflow-scrolling) 属性值为 `touch` 的元素
+9. [`will-change`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/will-change) 值设定了任一属性而该属性在 non-initial 值时会创建层叠上下文的元素
+10. [`contain`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/contain) 属性值为 `layout`、`paint` 或包含它们其中之一的合成值（比如 `contain: strict`、`contain: content`）的元素
+
+#### 需要裁剪的地方会被创建为图层
+
+比如说在固定大小的位置展示文字，多出部分隐藏或者滚动，则这种也就生成了单独的一层。
+
+### 图层绘制
+
+在构建完图层树之后，就开始绘制每一个图层。渲染引擎会把图层的绘制拆分成很小的指令，生成待绘制指令列表，这个可以从浏览器中看到。
+
+![](../../.gitbook/assets/image%20%2816%29.png)
+
+上图中红框为待绘制指令，右侧蓝框为绘制的过程。可以看到，到目前为止，渲染引擎开始绘制了。
+
+
+
+### 合成显示
 
 
 
