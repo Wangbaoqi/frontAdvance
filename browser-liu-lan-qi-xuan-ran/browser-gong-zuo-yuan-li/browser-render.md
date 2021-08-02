@@ -69,6 +69,84 @@ https://www.wangbaoqi.com
 
 类似上面地址，这两个地址是同一站点，所以共用一个渲染进程。
 
+### 提交导航
+
+渲染进程准备好之后，浏览器进程向渲染进程提交网络进程接收到的响应体（HTML数据）。
+
+* 浏览器进程接收到网络进程的响应头，就开始向渲染进程发起提交文档的消息
+* 渲染进程接收到消息之后，就和网络进程建立消息传输的管道
+* 等数据传输完成之后，渲染进程就会返回**确认导航**的消息给浏览器进程
+* 浏览器进程收到确认导航的消息之后，会更新浏览器界面状态，包含了安全状态，前进后退状态以及地址栏URL，并且更新web页面
+
+这也就是为什么打开一个页面会有一个加载的过程，到此为止，导航过程就结束了，接下来到了渲染过程，也就是最重要的一个环节，这个也是浏览器内核所做的事情。
+
+### 渲染阶段
+
+渲染阶段就就会开始页面解析以及子资源加载，一旦页面生成，就会向浏览器进程发送消息，浏览器进程接收到消息之后，就会停止加载动画。接下来详细阐述下这个过程。。
+
+当网络进程将URL请求的响应通过消息管道传输到渲染进程之后，渲染进程就会开始解析响应数据（也就是HTML文件\)。
+
+```markup
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <link rel="apple-touch-icon" href="/logo192.png" />
+    
+    <link rel="manifest" href="/manifest.json" />
+    
+    <title>React App</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    
+    <script src="/static/js/bundle.js"></script>
+    <script src="/static/js/vendors~main.chunk.js"></script>
+    <script src="/static/js/main.chunk.js"></script>
+  </body>
+</html>
+```
+
+上述的HTML文件就是发布到正式环境之后的文件。
+
+渲染进程要通过以下几个过程才能得到最后的图像，每个过程都会有**输入的内容**，**处理过程**以及**输出结果。**
+
+* 构建DOM
+* 样式计算
+* 布局阶段
+* 分层
+* 绘制
+* 分块
+* 光栅化
+* 合成
+
+### 渲染阶段 - DOM 树
+
+DOM树是浏览器能够理解的数据结构，因此需要将HTML解析成DOM树（其实是数据结构中的 **树** ）。
+
+![](../../.gitbook/assets/image%20%2814%29.png)
+
+DOM树的形式是**JavaScript对象**，因此可以用JS来修改节点的属性。
+
+DOM树是由**HTML 解析器**将HTML解析完成的。在[「HTML - 解析HTML文档」](../../html/parse-html.md)会详细说到如何将HTML解析成DOM树的。
+
+### 渲染阶段 - 样式计算
+
+样式计算就是计算出DOM树中每个节点的样式。
+
+首先，将纯文本CSS转换成浏览器能够理解的格式 - **styleSheets。**这些纯文本CSS引入方式有**外部引入Link、style 内联**以及**style属性内嵌。**
+
+![](../../.gitbook/assets/image%20%2813%29.png)
+
+
+
 
 
 
