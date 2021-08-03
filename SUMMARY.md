@@ -77,6 +77,12 @@
   * [browser - EventLoop](browser-liu-lan-qi-xuan-ran/browser-gong-zuo-yuan-li/browser-eventloop.md)
   * [browser - DOM](browser-liu-lan-qi-xuan-ran/browser-gong-zuo-yuan-li/browser-dom.md)
   * [browser - 路由](browser-liu-lan-qi-xuan-ran/browser-gong-zuo-yuan-li/browser-lu-you.md)
+* [browser - 性能](browser-liu-lan-qi-xuan-ran/browser-xing-neng/README.md)
+  * [概述](browser-liu-lan-qi-xuan-ran/browser-xing-neng/gai-shu.md)
+  * [RAIL模型](browser-liu-lan-qi-xuan-ran/browser-xing-neng/rail-mo-xing.md)
+  * [加载性能](browser-liu-lan-qi-xuan-ran/browser-xing-neng/jia-zai-xing-neng.md)
+  * [渲染性能](browser-liu-lan-qi-xuan-ran/browser-xing-neng/xuan-ran-xing-neng.md)
+  * [性能监控](browser-liu-lan-qi-xuan-ran/browser-xing-neng/xing-neng-jian-kong.md)
 * [Google - V8](browser-liu-lan-qi-xuan-ran/google-v8.md)
 
 ## FRAME、React与Vue <a id="frame-react-and-vue"></a>
@@ -96,8 +102,6 @@
 * [Vue Family](frame-react-and-vue/vue-family.md)
 
 ## NODE、服务端实现
-
-* [node - EventLoop](node-fu-wu-duan-shi-xian/node-eventloop.md)
 
 ## TOOL CHAIN、工具链
 
