@@ -74,6 +74,7 @@
 * [browser - 工作原理](browser-liu-lan-qi-xuan-ran/browser-gong-zuo-yuan-li/README.md)
   * [browser - 架构](browser-liu-lan-qi-xuan-ran/browser-gong-zuo-yuan-li/browser-jia-gou.md)
   * [browser - 渲染](browser-liu-lan-qi-xuan-ran/browser-gong-zuo-yuan-li/browser-render.md)
+  * [browser - 生命周期](browser-liu-lan-qi-xuan-ran/browser-gong-zuo-yuan-li/browser-sheng-ming-zhou-qi.md)
   * [browser - EventLoop](browser-liu-lan-qi-xuan-ran/browser-gong-zuo-yuan-li/browser-eventloop.md)
   * [browser - DOM](browser-liu-lan-qi-xuan-ran/browser-gong-zuo-yuan-li/browser-dom.md)
   * [browser - 路由](browser-liu-lan-qi-xuan-ran/browser-gong-zuo-yuan-li/browser-lu-you.md)
