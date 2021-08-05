@@ -4,7 +4,7 @@
 
 在React源码中，ReactDOM是单独的一个包，也是很重要的一个包。
 
-![](../../.gitbook/assets/reactdom-api.png)
+![](../../../.gitbook/assets/reactdom-api.png)
 
 ### ReactDOM.render
 
@@ -230,7 +230,7 @@ function createFiberRoot(
 
 ```
 
-关于 FiberRootNode 的数据结构[到这里](reactdom/fiberroot-shu-ju-jie-gou.md)，FiberNode数据结构在[这里](reactdom/fiber-shu-ju-jie-gou.md)。
+关于 FiberRootNode 的数据结构[到这里](../react-chuang-jian-geng-xin/fiberroot-shu-ju-jie-gou.md)，FiberNode数据结构在[这里](../react-chuang-jian-geng-xin/fiber-shu-ju-jie-gou.md)。
 
 紧接着创建`RootFiber` ，其实也是`Fiber`对象，不过他的 `tag` 属性代表的是根组件类型。
 

@@ -2,7 +2,7 @@
 
 **ReactJs** 是纯粹的一个JavaScript库，可以使用它来将页面元素转换成对象，而页面渲染则是通过**ReactDOM**来操作的，这里归纳一下React API以及底层是如何运行的。
 
-![](../../.gitbook/assets/react-api-.png)
+![](../../../.gitbook/assets/react-api-.png)
 
 在React中创建元素一般都是使用 **JSX** （JavaScript语法的扩展），即可以在**JavaScript**中使用 HTML 元素。而这样的语法格式，React是如何将它转换成对象的呢？答案肯定是**Babel** 转义。
 
@@ -194,11 +194,11 @@ class PureComp extends PureComponent<Props,State> {
 
 下图为组件钩子函数在Fiber调度过程中执行的时机和顺序
 
-![](../../.gitbook/assets/image%20%282%29.png)
+![](../../../.gitbook/assets/image%20%282%29.png)
 
 ### React.memo
 
-React.memo 的使用详情可以到 [「React Family - React API」](../../frame-react-and-vue/react-family/react-jsx.md#react-memo)查看。这里着重看下源码
+React.memo 的使用详情可以到 [「React Family - React API」](../../../frame-react-and-vue/react-family/react-jsx.md#react-memo)查看。这里着重看下源码
 
 ```javascript
 function memo<Props>(
@@ -273,7 +273,7 @@ function createRef(): RefObject {
 }
 ```
 
-在[「React Family - React API  React.createRef」](../../frame-react-and-vue/react-family/react-jsx.md#react-createref)中提到了Refs的执行时机
+在[「React Family - React API  React.createRef」](../../../frame-react-and-vue/react-family/react-jsx.md#react-createref)中提到了Refs的执行时机
 
 ref在定义之后，是直接绑定到组件的实例上的，这个绑定的过程是在组件挂载的时候，那什么时候将DOM元素或者React元素绑定到Ref上呢？
 
