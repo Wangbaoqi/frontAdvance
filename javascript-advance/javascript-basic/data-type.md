@@ -13,6 +13,7 @@
 * boolean
 * object
 * symbol \(ES6 新增\)
+* bigInt 
 
 #### typeof 判断类型
 

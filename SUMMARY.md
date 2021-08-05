@@ -18,6 +18,7 @@
 
 * [JavaScript 基础](javascript-advance/javascript-basic/README.md)
   * [JS 基础 - 数据类型](javascript-advance/javascript-basic/data-type.md)
+  * [JS 基础 - 运算符](javascript-advance/javascript-basic/js-ji-chu-yun-suan-fu.md)
   * [JS 基础 - 作用域以及闭包](javascript-advance/javascript-basic/scope-this.md)
   * [JS 基础 - this](javascript-advance/javascript-basic/this.md)
   * [JS 基础 - 引用类型](javascript-advance/javascript-basic/reference-type.md)
