@@ -1,4 +1,4 @@
-# Promise 源码实现
+# Promise 实现篇
 
 Promise 的实现要遵循 [Promise/A+](https://promisesaplus.com/) 规范，其实现过程也可以进一步掌握 Promise 的原理。该规范主要是实现了 **thenable** 的接口。
 

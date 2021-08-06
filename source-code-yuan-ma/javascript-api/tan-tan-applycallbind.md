@@ -1,122 +1,308 @@
-# apply、call、bind实现
+# 对象实现篇
 
-这几个函数的功能其实都是改变this的指向，前面在[「JavaScript基础 - this」](../../javascript-advance/javascript-basic/this.md#xian-shi-bang-ding)的时候简单的阐述过。接下来全面的学习一下这几个函数。💪
+## 深浅拷贝实现
 
-### apply和call
+**拷贝是日常开发常用的方式，也是面试高频的问题**
 
-都知道apply和call的之间的区别，是传的参数不同，apply传的是数组参数，而call传的是列表参数，这两个函数是直接执行的
+### 浅拷贝
+
+> 浅拷贝: 对基本类型来讲，就是值得拷贝，对于引用类型来讲，就是引用的拷贝，但是只会拷贝一层
+
+**浅拷贝的方式**
+
+1. Object.assign 
+
+[MDN - Object.assign](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/assign):是将所有可枚举属性的值从一个或者多个源对象复制到目标对象，将返回这个目标对象。
 
 ```javascript
-let person = {
-  title: 'nate'
+let obj = {
+  a: 1,
+  b: '1',
+  c: {
+    d: '2'
+  },
+  e: [2],
+  f: function(){},
+  g: Symbol('dd'),
+  h: null, 
+  j: undefined,
+  p: new Date(),
+  k: /\./
 }
-function foo(name, age) {
-  console.log(name)
-  console.log(age)
-  console.log(this.title)
-  return name
-}
-foo.call(person, 'baoqi', 18) // 'baoqi' 18 nate
-foo.apply(person, ['baoqi', 18]) // 'baoqi' 18 nate
+var newObj = Object.assign({}, obj)
+console.log(newObj)
+
+newObj.name = 'baoqi.wang'
+newObj.friends.name = 'baoqi'
+
+console.log(obj)
 ```
 
-结果是显而易见的，但是想知道这种方式是怎么执行的，是需要花费点时间研究的。下面手动实现以下apply和call
+可以看到obj和newObj的friends的值都变了，因此，Object.assign只能拷贝引用类型的一层
 
-### 手动实现apply
+1. Array.prototype.slice 
+
+[MDN - Array.prototype.slice](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/slice):返回一个新的数组对象。新的数组对象由（begin和end - 不包含）决定的原数组的浅拷贝。原数组的值不会改变。
 
 ```javascript
-// call 手动实现
-Function.prototype.sapply = function(context) {
-  // 传进来的上下文
-  let self = context || window;
-  // 函数的返回值
-  let result;
-  // 给当前上下文添加属性 - 当前函数
-  self.fn = this;
-  // 执行函数 展开数组参数
-  /**
-   * arguments 包含了传进来的上下文以及参数
-   * 当前例子
-   * arguments [{title: 'nate', fn}, ['baoqi', 24]]
-   * 这里要对 arguments做容错处理
-   */
-  if(arguments[1]) {
-    result = self.fn(...arguments[1]);
-  }else {
-    result = self.fn();
+var arr = [
+  1,
+  '2',
+  {
+    name: 'nate'
   }
-  // 删除添加的属性
-  delete context.fn;
-  // 返回函数执行的结果
-  return result;
-}
-
-// 以上述person和foo为例
-foo.sapply(person, ['baoqiwang', 18]) // baoqiwang 24 nate undefined
+]
+var newArr = arr.slice(1) // ['2', {name: 'nate'}]
+arr[2].name = 'baoqi'
+console.log(arr) // [1, '2', {name: 'nate'}]
+console.log(newArr) // ['2', {name: 'baoqi'}]
 ```
 
-### 手动实现call
+1. 扩展运算符 Spread
 
-call的实现原理和apply基本是一致的，不过还是有点细微的差异
+ES6 新增展开运算符，也可以实现浅拷贝
 
 ```javascript
-Function.prototype.scall = function(context) {
-  let self = context || window;
-  let result;
-  self.fn = this;
-  /**
-   * 差异 跟apply
-   * typeof arguments  "object" arguments 是一个对象
-   * args 是获取传入函数的参数数组
-   */
-  const args = [...arguments].slice(1);
-  if(args.length) {
-    result = self.fn(...args);
-  }else {
-    result = self.fn();
+var newObj = {...obj}
+var newArr = [...arr]
+```
+
+1. 手动实现浅拷贝
+
+实现浅拷贝的原理是遍历一层就可以
+
+```javascript
+function copy(obj) {
+  if(typeof obj !== 'object' || obj === null) return 
+
+  let newObj = Array.isArray(obj) ? [] : {}
+
+  for(let i in obj) {
+    if(obj.hasOwnProperty(i)) {
+      newObj[i] = obj[i]
+    }
   }
-  delete self.fn;
-  return result;
+  return newObj
 }
+let newObj = copy(obj)
 ```
 
-接下来就开始扯一扯bind了
+### 深拷贝
 
-### bind
+> 深拷贝： 顾名思义，重新拷贝一份，且两者互不联系
 
-bind的内部运行原理基本和apply、call是类似的，但是他是返回了一个函数, 先看下原生的bind
+**深拷贝的方式**
 
-```javascript
-let newFoo = foo.bind(person)
-newFoo('baoqi', 18) //  baoqiwang 24 nate
-```
-
-接下里手动实现bind, bind 可以接受多个参数
-
-### 手动实现bind
-
-1. 原型链的方式
-2. 封装function的方式
+1. JSON.parse\(JSON.stringify\(obj\)\)
 
 ```javascript
-// 1. 原型链的方式
-Function.prototype.sbind = function(context) {
-  // let context = context || window;
-  // 因为返回函数 闭包原因 这里保存函数引用 或者 返回函数采用箭头函数模式
-  let self = this;
-  // 柯里化传参 保存bind第一个后面的参数
-  let args = [...arguments].slice(1);
-
-  return function() {
-    // 合并参数
-    return self.apply(context, [...args, ...arguments])
+// Object 和 array 都可以完成深拷贝
+var obj = {
+  name: 'nate.wang',
+  friends: {
+    name: 'baoqiwang',
+    age: 20
   }
 }
-// 2. 封装function方式 这种方式就没有上述方式周密了
-function sbind(fn, obj) {
-  return () => {
-    return fn.apply(obj, [...arguments])
+var newObj = JSON.parse(JSON.stringify(obj))
+obj.friends.name = 'baoqi.nate'
+
+conosle.log(newObj)
+// {
+//   name: 'nate.wang',
+//   friends: {
+//     name: 'baoqiwang',
+//     age: 20
+//   }
+// }
+```
+
+**注意：以下的方法会有问题**
+
+* 忽略undefined 
+* 忽略Symbol
+* 忽略function - 不能序列化函数
+* 不能解决循环引用的对象
+* 不能处理 Date\(\)
+* 不能处理正则
+
+```javascript
+let obj = {
+  a: 1,
+  b: '1',
+  c: {
+    d: '2'
+  },
+  e: [2],
+  f: function(){},
+  g: Symbol('dd'),
+  h: null, 
+  j: undefined,
+  p: new Date(),
+  k: /\./
+}
+var newObjF = JSON.parse(JSON.stringify(obj)) // {d: 30}
+
+// 循环引用的问题
+var objLoop = {
+  a: 1, 
+  b: {
+    c: 2,
+    d: 3
   }
 }
+objLoop.a = objLoop.b
+objLoop.b.d = objLoop.a
+var newObjL = JSON.parse(JSON.stringify(objLoop)) // Uncaught TypeError: Converting circular structure to JSON
+
+// new Date() 的问题 不能正确转化
+var date = new Date() // Tue Dec 24 2019 10:34:00 GMT+0800 (中国标准时间)
+var newDate = JSON.parse(JSON.stringify(date)) // 2019-12-24T02:33:19.936Z
+
+// 解决方法 转换成时间戳再拷贝
+JSON.parse(JSON.stringify(+new Date()))
+
+// 正则问题
+
+var objReg = {
+  a: 3,
+  b: /'123'/
+}
+JSON.parse(JSON.stringify(objReg))
 ```
+
+1. 递归实现深拷贝 
+
+首先**实现浅拷贝**
+
+```javascript
+function cloneShadow(obj) {
+  if(typeof obj !== 'object' || obj === null) return obj
+
+  var target = Array.isArray(obj) ? [] : {}
+
+  for(let key in obj) {
+    if(Object.protoproto.hasOwnPerperty.call(obj, key)) {
+      target[key] = obj[key]
+    }
+  }
+  return target
+}
+```
+
+稍微改动一下，可以进行深拷贝
+
+[**MDN - WeakMap**](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/WeakMap) 可以解决循环引用的问题
+
+```javascript
+function isObject(source) {
+  return Object.prototype.toString.call(source) === '[object Object]'
+}
+
+function deepClone(source, weak = new WeakMap()) {
+  if(!isObject(source)) return source
+  if(weak.has(source)) return weak.get(source)
+
+  let target = Array.isArray(source) ? [] : {}
+  weak.set(source, target)
+
+  for(let key in source) {
+    if(Object.prototype.hasOwnProperty.call(source, key)) {
+      target[key] = isObject(source[key]) ? deepClone(source[key], weak) : source[key]
+    }
+  }
+  return target
+}
+
+var objs = {
+  a: 1,
+  b: '2',
+  c: false,
+  d: {
+    name: 'baoqi'
+  },
+  e: [3,4, [5,6]],
+  f: undefined,
+  g: function() { console.log('function') },
+  h: Symbol('symbol'),
+  i: /'123'/
+}
+
+var newObjs = deepClone(objs)
+```
+
+### 破解递归爆栈
+
+使用递归可能出现的情况就爆栈（如果深度比较深的话）。解决方法常见的有**消除尾递归**和**采用循环**
+
+1. 消除尾递归
+2. 采用循环的方式 不会出现爆栈的情景 
+
+在这里使用`BFS`循环的方式来破解递归爆栈，采用 `Map` 来解决循环引用以及重复值的调用
+
+先附上code
+
+```javascript
+function deepLoop(source) {
+  const root = {};
+  const visited = new Map();
+  // 栈顶的元素
+  const loopList = [
+    {
+      parent: root,
+      key: undefined,
+      data: source
+    }
+  ]
+
+  while(loopList.length) {
+    const node = loopList.pop();
+    const parent = node.parent;
+    const key = node.key;
+    const data = node.data;
+
+    // 初始化
+    let res = parent;
+
+    if(typeof key !== 'undefined') {
+      res = parent[key] = {};
+    }
+    // 循环引用 减少重复值的调用
+    if(visited.has(key)) {
+      parent[key] = visited.get(key);
+      continue;
+    }
+
+    for(let i in data) {
+      if(data.hasOwnProperty(i)) {
+        if(typeof data[i] === 'object') {
+          loopList.push({
+            parent: res,
+            key: i,
+            data: data[i]
+          })
+        }else {
+          res[i] = data[i]
+        }
+      }
+    }
+    visited.set(key, value)
+  }
+  return root;
+}
+```
+
+这里采用了数据结构**栈**的方式，结束循环的条件是栈为空。
+
+### 参考
+
+  \*  [深拷贝的终极探索](https://yanhaijing.com/javascript/2018/10/10/clone-deep/)
+
+## new实现
+
+## instanceof 实现
+
+
+
+## Proxy数据绑定实现
 
