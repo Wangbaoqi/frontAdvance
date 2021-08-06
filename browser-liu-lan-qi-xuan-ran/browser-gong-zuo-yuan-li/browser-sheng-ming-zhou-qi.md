@@ -130,7 +130,7 @@ A `blur` 事件并不一定意味着状态的改变。如果页面不再具有�
 `unload` 事件从来不被推荐，因为它不可靠，在某些情况下可能会损害性能。参见[legacy APIs section 遗留 api 部分](https://developers.google.com/web/updates/2018/07/page-lifecycle-api#legacy-lifecycle-apis-to-avoid) ，了解详情
 {% endhint %}
 
-
+### 在代码中观察页面的生命周期
 
 
 
@@ -139,6 +139,7 @@ A `blur` 事件并不一定意味着状态的改变。如果页面不再具有�
 #### 参考连接
 
 * [Page visibility API ](https://www.ruanyifeng.com/blog/2018/10/page_visibility_api.html)
+* [Page Lifecycle API](https://wicg.github.io/page-lifecycle/)
 
 
 
