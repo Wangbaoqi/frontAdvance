@@ -2,11 +2,126 @@
 
 ## 原型API实现
 
-
-
 ### Array.prototype.indexOf
 
+根据`indexOf` 的定义，这里实现了其`Polyfill`版本
+
+> ```javascript
+> arr.indexOf(searchElement[, fromIndex])
+> ```
+
+接收两个参数  
+
+* `searchElement` 查询目标值 
+* `fromIndex` 从什么位置查
+  * `fromIndex >= len`   不会再数组中查
+  * `fromIndex` 为负值，如`-1`代表从数组末尾查找，依次类推。不过不会影响其查找顺序。
+  * `len - Math.abs(fromIndex) < 0`   则还是查找整个数组，索引从`0`开始
+
+返回值
+
+* 查询有结果 返回其值索引位置
+* 无结果 返回 -1
+
+```javascript
+Array.prototype.nIndexOf = function(target, fromIdx) {
+  let idx;
+  
+  const arr = Object(this);
+
+  const len = arr.length >>> 0;
+
+  if(len == 0) return -1;
+
+  // 将fromIdx 转换成 number 类型
+  idx = +fromIdx || 0;
+
+  if(Math.abs(idx) === Infinity) {
+    idx = 0;
+  }
+
+  if(idx >= len) return -1;
+
+  // 抵消idx 
+  idx = Math.max(n >= 0 ? 0 : len - Math.abs(n), 0)
+
+  while(idx < len) {
+    if(idx in arr && arr[idx] === target) {
+      return idx
+    }
+    idx++;
+  }
+
+  return -1
+}
+```
+
 ### Array.prototype.forEach
+
+根据forEach的定义，实现其`Polyfill` 版本
+
+```text
+arr.forEach(callback(currentValue [, index [, array]])[, thisArg])
+```
+
+接收两个参数
+
+* `callback` 数组中的每个元素需要执行的函数
+  * `currentValue` 当前执行的元素值
+  * `index 可选` 当前执行的元素的索引
+  * `array 可选` 当前数组副本
+* `thisArg 可选` 当执行回调函数时，用作`this`的值
+
+返回值为`undefined` 
+
+#### 注意事项
+
+`forEach()` 按升序为数组中的每一项元素执行回调函数。
+
+{% hint style="warning" %}
+`thisArg` 如果有值，则回调函数中this指向其`thisArg`，如果未指定值，回调函数中`this`指向全局对象。
+
+`forEach` 在遍历的第一次已经确定了其范围，也就是整个数组的值，在遍历的过程中，向数组添加的值（删除的值）不会被`callback`接收到。
+
+**如果想要终止、跳出`forEach`循环，只能抛出异常**。
+{% endhint %}
+
+```javascript
+Array.prototype.nForEach = function(cb, thisArg) {
+
+  if(this == null) {
+    throw new TypeError('this is null or defined')
+  }
+
+  let that = null;
+  let idx = 0;
+  // 
+  let array = Object(this);
+  let len = array.length >>> 0;
+
+  if(typeof cb !== 'function') {
+    throw new TypeError('callback is not function')
+  }
+
+  if(arguments.length > 1) {
+    that = thisArg
+  }
+
+  while(idx < len) {
+    let val
+
+    if(idx in array) {
+      val = array[idx]
+      cb.call(that, val, idx, array)
+    }
+    idx++
+  }
+}
+```
+
+
+
+
 
 ### Array.prototype.some   
 

@@ -1,2 +1,23 @@
 # 数字字符串
 
+### 十进制转换为其他进制
+
+给定一个十进制数 M ，以及需要转换的进制数 N 。将十进制数 M 转化为 N 进制数。
+
+```javascript
+const NumberToBase = (source, target) => {
+  let current = Math.abs(source);
+  let base = ''
+  while(current > 1) {
+    const digit = current % target;
+    base += digit;
+    current = ~~(current / target);
+  }
+  base = current + base;
+  if(source < 0) base = '-' + base
+  return base;
+}
+```
+
+
+
