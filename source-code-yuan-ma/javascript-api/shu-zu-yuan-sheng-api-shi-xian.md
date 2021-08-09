@@ -2,6 +2,8 @@
 
 ## 原型API实现
 
+数组[原型API](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array)
+
 ### Array.prototype.indexOf
 
 根据`indexOf` 的定义，这里实现了其`Polyfill`版本
