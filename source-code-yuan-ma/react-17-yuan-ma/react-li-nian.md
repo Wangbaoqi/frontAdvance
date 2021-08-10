@@ -4,7 +4,7 @@
 
 关于[**快速响应**](../../browser-liu-lan-qi-xuan-ran/browser-xing-neng/)**，**正是衡量一个Web应用程序是否是优秀的、体验好的标准。
 
-对于快速响应，主要体现在[**屏幕刷新**](../../browser-liu-lan-qi-xuan-ran/browser-xing-neng/xuan-ran-xing-neng.md)和[**服务快速响应**](../../browser-liu-lan-qi-xuan-ran/browser-xing-neng/jia-zai-xing-neng.md)**。**
+对于快速响应，主要体现在[**屏幕刷新**](../../browser-liu-lan-qi-xuan-ran/browser-xing-neng/xuan-ran-xing-neng/)和[**服务快速响应**](../../browser-liu-lan-qi-xuan-ran/browser-xing-neng/jia-zai-xing-neng.md)**。**
 
 ### 屏幕刷新
 

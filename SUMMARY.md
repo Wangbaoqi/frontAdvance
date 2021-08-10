@@ -60,7 +60,7 @@
   * [场景相关篇](source-code-yuan-ma/javascript-api/jie-liu-fang-dou-shi-xian.md)
 * [React 17 源码篇](source-code-yuan-ma/react-17-yuan-ma/README.md)
   * [React 理念](source-code-yuan-ma/react-17-yuan-ma/react-li-nian.md)
-  * [Fiber 架构](source-code-yuan-ma/react-17-yuan-ma/react-chuang-jian-geng-xin/README.md)
+  * [React 架构](source-code-yuan-ma/react-17-yuan-ma/react-chuang-jian-geng-xin/README.md)
     * [Fiber 数据结构](source-code-yuan-ma/react-17-yuan-ma/react-chuang-jian-geng-xin/fiber-shu-ju-jie-gou.md)
     * [FiberRoot 数据结构](source-code-yuan-ma/react-17-yuan-ma/react-chuang-jian-geng-xin/fiberroot-shu-ju-jie-gou.md)
   * [React 协调篇](source-code-yuan-ma/react-17-yuan-ma/react-xie-tiao-pian/README.md)
@@ -87,8 +87,19 @@
   * [概述](browser-liu-lan-qi-xuan-ran/browser-xing-neng/gai-shu.md)
   * [RAIL模型](browser-liu-lan-qi-xuan-ran/browser-xing-neng/rail-mo-xing.md)
   * [加载性能](browser-liu-lan-qi-xuan-ran/browser-xing-neng/jia-zai-xing-neng.md)
-  * [渲染性能](browser-liu-lan-qi-xuan-ran/browser-xing-neng/xuan-ran-xing-neng.md)
+  * [渲染性能](browser-liu-lan-qi-xuan-ran/browser-xing-neng/xuan-ran-xing-neng/README.md)
+    * [屏幕刷新](browser-liu-lan-qi-xuan-ran/browser-xing-neng/xuan-ran-xing-neng/ping-mu-shua-xin.md)
+    * [优化JS执行](browser-liu-lan-qi-xuan-ran/browser-xing-neng/xuan-ran-xing-neng/you-hua-js-zhi-hang.md)
+    * [减少样式计算](browser-liu-lan-qi-xuan-ran/browser-xing-neng/xuan-ran-xing-neng/jian-shao-yang-shi-ji-suan.md)
+    * [避免复杂布局](browser-liu-lan-qi-xuan-ran/browser-xing-neng/xuan-ran-xing-neng/bi-mian-fu-za-bu-ju.md)
+    * [使用合成器属性](browser-liu-lan-qi-xuan-ran/browser-xing-neng/xuan-ran-xing-neng/shi-yong-he-cheng-qi-shu-xing.md)
+    * [去除输入程序抖动](browser-liu-lan-qi-xuan-ran/browser-xing-neng/xuan-ran-xing-neng/qu-chu-shu-ru-cheng-xu-dou-dong.md)
   * [性能监控](browser-liu-lan-qi-xuan-ran/browser-xing-neng/xing-neng-jian-kong.md)
+  * [Untitled](browser-liu-lan-qi-xuan-ran/browser-xing-neng/untitled.md)
+* [browser - WebAPI](browser-liu-lan-qi-xuan-ran/browser-webapi/README.md)
+  * [规范篇](browser-liu-lan-qi-xuan-ran/browser-webapi/gui-fan-pian/README.md)
+    * [requestIdleCallback](browser-liu-lan-qi-xuan-ran/browser-webapi/gui-fan-pian/requestidlecallback.md)
+  * [接口篇](browser-liu-lan-qi-xuan-ran/browser-webapi/jie-kou-pian.md)
 * [Google - V8](browser-liu-lan-qi-xuan-ran/google-v8.md)
 
 ## FRAME、React与Vue <a id="frame-react-and-vue"></a>
@@ -113,7 +124,5 @@
 
 ## QUESTION、收集 <a id="interview-collect"></a>
 
-* [JavaScript](interview-collect/javascript/README.md)
-  * [谈谈提升](interview-collect/javascript/tan-tan-ti-sheng.md)
 * [Git](interview-collect/git.md)
 
