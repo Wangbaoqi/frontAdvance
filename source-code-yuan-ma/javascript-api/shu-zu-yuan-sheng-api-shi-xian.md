@@ -8,9 +8,9 @@
 
 根据`indexOf` 的定义，这里实现了其`Polyfill`版本
 
-> ```javascript
-> arr.indexOf(searchElement[, fromIndex])
-> ```
+```javascript
+arr.indexOf(searchElement[, fromIndex])
+```
 
 接收两个参数  
 
@@ -121,30 +121,67 @@ Array.prototype.nForEach = function(cb, thisArg) {
 }
 ```
 
+### Array.prototype.some  
 
+根据**some**的定义，实现其`Polyfill` 版本
 
+```text
+arr.some(callback(element[, index[, array]])[, thisArg])
+```
 
+接收的参数跟forEach 一致，返回值为`true or false` 
 
-### Array.prototype.some   
+```javascript
+Array.prototype.nSome = function(cb, thisArg) {
+  
+  if(this == null) {
+    throw new TypeError('this is null or defined')
+  }
+  
+  if(typeof cb != 'function') {
+    throw new TypeError('callback is not function')
+  }
+  let idx = 0, that = thisArg || void 0;
+  
+  const array = Object(this);
+  const len = array.length >>> 0;
+  
+  while(idx < len) {
+    if(idx in array && cb.call(that, array[idx], idx, array)) {
+      return true
+    }
+  }
+  return false;
+}
+```
 
 ### Array.prototype.filter 
 
 ```javascript
 // this 是执行callback fn 中使用的this的值
-Array.prototype.sfilter = function(fn, thisArg) {
-  let self = thisArg || this;
-  let arr = [];
-
-  for(var i = 0; i < self.length; i++) {
-    // callback 执行的结果
-    /** param 
-     * this[i] 当前的值
-     * i 当前的位置索引
-     * this 当前的引用的数组
-     */
-    fn(self[i], i, self) && arr.push(self[i])
+Array.prototype.sfilter = function(cb, thisArg) {
+  if(this == null) {
+    throw new TypeError('this is null or defined')
   }
-  return arr;
+  
+  if(typeof cb != 'function') {
+    throw new TypeError('callback is not function')
+  }
+  let idx = 0;
+  let that = thisArg || null;
+
+  let array = Object(this)
+  let len = array.length >>> 0;
+
+  let result = []
+
+  while(idx < len) {
+    if(idx in array && cb.call(that, array[idx], idx, array)) {
+      result.push(array[idx])
+    }
+    idx++
+  }
+  return result
 }
 
 // test 1
@@ -182,16 +219,68 @@ let newArr = arr.smap((item, index, arr) => {
 
 ### Array.prototype.reduce
 
+根据**reduce**的定义，实现其`Polyfill` 版本
+
+```text
+arr.reduce(callback(accumulator, currentValue[, index[, array]])[, initialValue])
+```
+
+接收两个参数
+
+* `callback` 数组中的每个元素需要执行的函数
+  * `accumulator`  累加器累计回调的值，是上一次调用回调返回的累加值
+  * `currentValue` 当前执行的元素值
+  * `index 可选` 当前执行的元素的索引
+  * `array 可选` 当前数组副本
+* `initialValue 可选` 作为第一次调用 `accumulator` 的初始值
+
+返回值为累加器结果 
+
 ```javascript
-Array.prototype.sreduce = function(fn, initVal) {
-  for(let i = 0; i < this.length; i++) {
-    initVal = fn(initVal, this[i], i, this)
+Array.prototype.nReduce = function(fn, initVal) {
+  
+  if(this == null) {
+     throw new TypeError('this is null or defined')
   }
-  return initVal
+  if(typeof cb !== 'function') {
+    throw new TypeError('callback is not function')
+  }
+
+  let array = Object(this)
+  let len = array.length >>> 0;
+
+  let idx = 0;
+  let value;
+
+  if(arguments.length >= 2) {
+    value = initValue
+  }else {
+
+    while(idx < len && !(idx in array)) {
+      idx++
+    }
+
+    if(idx >= len) {
+      throw TypeError('Reduce of empty array with no initValue')
+    }
+
+    value = array[idx++]
+  }
+
+  while(idx < len) {
+    if(idx in array) {
+      value = cb(value, array[idx], idx, array)
+    }
+    idx++
+  }
+
+  return value
 }
 ```
 
 ## 数组去重
+
+
 
 数组去重已经是一个老生常谈的话题了，这里再重新温习和稳固一下，之前在[数据结构-数组常见使用场景](/algorithm/structure/array.html#数组去重)中简单学习过，这次全面的攻克掉。
 
