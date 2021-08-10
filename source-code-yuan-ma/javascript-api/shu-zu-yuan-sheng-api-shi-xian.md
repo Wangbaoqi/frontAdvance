@@ -280,8 +280,6 @@ Array.prototype.nReduce = function(fn, initVal) {
 
 ## 数组去重
 
-
-
 数组去重已经是一个老生常谈的话题了，这里再重新温习和稳固一下，之前在[数据结构-数组常见使用场景](/algorithm/structure/array.html#数组去重)中简单学习过，这次全面的攻克掉。
 
 这里收集了不同的数组去重的方法，接下来逐一去攻克。。
@@ -350,7 +348,7 @@ function unique(arr) {
 unique(); // [1, 2, 3, 5, 9, 4, 8, "1", "8", {}, {}]
 ```
 
-### Es6 Map数据结构去重
+### ES6 Map数据结构去重
 
 利用[MDN - Map数据结构](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Map)的键值是唯一的特性进行去重。
 
@@ -374,15 +372,80 @@ uniqueMap(arr) // [1, 2, 3, 5, 9, 4, 8, "1", "8", {}, {}]
 
 ### 引用类型去重
 
-上述的几种方法可以看到，对于基本类型可以去重，但是引用类型是无效的，在开发场景中，对于引用类型的去重也是非常常见的
+上述的几种方法可以看到，对于基本类型可以去重，但是引用类型是无效的，在开发场景中，对于引用类型的去重也是非常常见的。
 
 ```javascript
-function uniqueArray(arr) {
+const uniqueArray = (arr) => {
   return [...new Set(arr.map(e => JSON.stringify(e)))].map(e => JSON.parse(e))
+}
+
+// 利用map key不能重复的特性
+const uniqueKey = (arr, key) => {
+  const fn = item => item[key]
+  return [
+    ...new Map(
+      arr.map(e => [fn(e), e])
+    ).values()
+  ]
 }
 ```
 
 ## 数组扁平化
+
+数组扁平化也是常用的一种数组解决方案。
+
+### ES10 flat
+
+```javascript
+const arr = [1, [2, 3, [4, 5]]]
+arr.flat(Infinity);
+```
+
+### 递归 + for
+
+```javascript
+const flatten = (arr) => {
+  let res = []
+  for(let i = 0; i < arr.length; i++) {
+    if(Array.isArray(arr[i])) {
+      res = res.concat(flatten(arr[i]))
+    }else {
+      res.push(arr[i])
+    }
+  }
+  return res
+}
+```
+
+### 递归 + Reduce
+
+```javascript
+const flatten1 = (arr) => {
+  arr.reduce((prev, cur) => {
+    return prev.concat(Array.isArray(cur) ? flatten1(cur) : cur)
+  }, [])
+}
+```
+
+### 循环 + stack 
+
+```javascript
+const flatten2 = (arr) => {
+  const stack = [...arr]
+  const result = []
+  
+  while(stack.length) {
+    const cur = stack.shift();
+    
+    if(Array.isArray(cur)) {
+      stack.push(...cur)
+    }else {
+      result.push(cur)
+    }
+  }
+  return result;
+}
+```
 
 
 
