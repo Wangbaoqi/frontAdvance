@@ -202,14 +202,34 @@ let ffArr = Array.prototype.sfilter.call(arr, (item, index, arr) => {
  * fn callback
  * thisArg 可选参数
  */ 
-Array.prototype.smap = function(fn, thisArg) {
-  let self = thisArg || this;
-  let arr = [];
-  for(let i = 0; i < self.length; i++) {
-    // callback 执行的结果被添加到新数组中
-    arr.push(fn(self[i], i, self))
+Array.prototype.nMap = function(cb, thisArg) {
+
+  if(this == null) {
+    throw new TypeError('this is null or not defined')
   }
-  return arr;
+
+  if(typeof cb != 'function') {
+    throw new TypeError('callback is not function')
+  }
+
+  let idx = 0;
+  let that = thisArg || window;
+
+  let arr = Object(this)
+  let len = arr.length >>> 0;
+
+  let res = []
+
+
+  while(idx < len) {
+
+    if(idx in arr) {
+      res.push(cb.call(that, arr[idx], idx, arr))
+    }
+    idx++
+  }
+
+  return res
 }
 
 let newArr = arr.smap((item, index, arr) => {
@@ -447,11 +467,45 @@ const flatten2 = (arr) => {
 }
 ```
 
+## 数组之间交集、并集、差集
 
+### 数组的交集
 
-## 数组之间交集
+```javascript
+let a = [1, 2, 3];
+let b = [2, 4, 5];
+// result [2]
+```
 
+方法有很多，这里用`filter+includes`
 
+```javascript
+const arr_mix = a.filter(e => b.includes(e))
+```
 
+### 数组的并集
 
+```javascript
+let a = [1, 2, 3];
+let b = [2, 4, 5];
+// result [1,2,3,4,5]
+```
+
+方法也有很多，这里合并去重
+
+```javascript
+const arr_union = [...new Set([...a, ...b])]
+```
+
+### 数组的差集
+
+```javascript
+let a = [1, 2, 3];
+let b = [2, 4, 5];
+// result [1,3,4,5]
+```
+
+```javascript
+const arr_diff = arr.union.filter(e => !arr_mix.includes(e))
+```
 
