@@ -54,6 +54,8 @@ ReactDOM.unstable_createRoot(el).render(<APP/>)
 
 在常规的解决方案中，都会设置一个loading图，等到有响应的时候关掉。这样做的结果，不管代理客户端的网络快慢，都会展示loading。但是在网络情况很好的场景（不影响视觉的前提下），展示loading是完全没有必要的。
 
+
+
 因此，React为此增加了`Suspense`组件**（**[**源码**](reactdom/react-api.md#react-suspense)**）**，其内部也是将**同步更新**更改成了**可中断的异步更新。**
 
 ### 总结
