@@ -31,7 +31,53 @@ LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(10).eat('junk foo
 
 可以看到，该题主要考察的是代码的执行顺序，涉及同步代码和异步代码
 
+#### 用类实现
 
+```javascript
+class LazyManClass {
+  constructor(name) {
+    this.task = [];
+    console.log(`Hi I am ${name}`)
+    this.next()
+  }
+  eat(food) {
+    const fn = () => {
+      console.log(`I am eating ${food}`)
+      this.next()
+    }
+    this.task.push(fn)
+    return this;
+  }
+  sleep(time) {
+    const fn = () => {
+      setTimeout(() => {
+        console.log(`等待了${time}秒...`)
+        this.next()
+      }, time * 1000)
+    }
+    this.task.push(fn)
+    return this;
+  }
+  sleepFirst(time) {
+    const fn = () => {
+      setTimeout(() => {
+        console.log(`等待了${time}秒...`)
+        this.next()
+      }, time * 1000)
+    }
+    this.task.unshift(fn)
+    return this;
+  }
+  next() {
+    const task = this.task.shift();
+    task && task()
+  }
+}
+
+const LazyMan = (name) => {
+  return new LazyManClass(name)
+}
+```
 
 
 
