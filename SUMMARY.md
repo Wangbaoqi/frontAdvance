@@ -34,6 +34,7 @@
   * [JS 进阶 - 内存与性能](javascript-advance/javascript-jin-jie/memory.md)
 * [JavaScript 设计模式](javascript-advance/javascript-she-ji-mo-shi/README.md)
   * [发布-订阅模式](javascript-advance/javascript-she-ji-mo-shi/publish-model.md)
+* [JavaScript 函数式编程](javascript-advance/javascript-han-shu-shi-bian-cheng.md)
 * [ECMAScript Standard](javascript-advance/ecmascript-standard/README.md)
   * [ES Version - API](javascript-advance/ecmascript-standard/es-version-api.md)
   * [ES Grammar - 词汇语法](javascript-advance/ecmascript-standard/es-grammar-lexical.md)

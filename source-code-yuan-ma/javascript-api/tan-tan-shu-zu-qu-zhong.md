@@ -154,11 +154,64 @@ const curry = (fn) => {
 }
 ```
 
-
-
 ## 函数compose实现
 
+函数组合也是函数式编程中的一个概念。
 
+首先要将嵌套执行的函数平铺开来，将一个函数的返回值作为另一个函数的参数，执行顺序是从右向左的。
+
+```javascript
+function add(a, b) {
+  return `${a}.${b}`;
+}
+
+function toUpper(str) {
+  return str.toUpperCase();
+}
+
+function log(str) {
+  return str
+}
+
+// 使用 compose 之前：
+console.log(log(toUpper(add('nate', 'frank')))); // NATE.FRANK
+// 使用 compose 之后：
+console.log(compose(log, toUpper, add)('nate', 'frank')); // NATE.FRANK
+```
+
+可以看到，`compose`的参数为`function`，而且参数顺序是函数执行的顺序。
+
+```javascript
+const compose = (...fns) => {
+  return fns.reduce((prev, cur) => {
+    return (...args) => {
+      return prev(cur(...args))
+    }
+  })
+}
+
+// 使用reduce 分解开来
+const compose = (...fns) => {
+  const out = (...args) => {
+    return log(toUpper(...args))
+  }
+  return out(add(...args))
+}
+```
+
+## 函数Pipe实现
+
+函数Pipe跟函数组合基本差不多，唯一的不同是函数执行的顺序不同，Pipe是从左到右的。
+
+```javascript
+const pipe = (...fns) => {
+  return fns.reduce((prev, cur) => {
+    return (...args) => {
+      return cur(prev(...args))
+    }
+  })
+}
+```
 
 
 
