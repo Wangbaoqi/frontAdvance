@@ -124,6 +124,36 @@ function sbind(fn, obj) {
 
 ## 函数柯里化
 
+函数柯里化是[函数式编程](https://llh911001.gitbooks.io/mostly-adequate-guide-chinese/content/)里的内容，把接收多个参数转换为接收一个参数的函数，并且返回接收「剩余参数」的函数的一种应用
+
+```javascript
+const sum = (a, b, c, d) => a + b + c + d;
+const result = curry(sum)(1)(2,3)(4); // 10
+// or 
+curry(sum)(1,2)(3,4)
+// or
+curry(sum)(1,2,3,4)
+```
+
+可以看到，curry\(sum\) 返回的是一个函数，如果后面还带有参数的话，继续返回函数，保存当前的参数，直到接收的参数的数量和sum接收的参数数量一致，则会一次性调用sum，计算出结果。
+
+这个是不是有点像闭包的应用呢？没错，就是闭包的应用。
+
+```javascript
+const curry = (fn) => {
+  const len = fn.length; // fn 参数的数量
+  return function curried(...args) {
+    if(args.length >= len) {
+      fn.apply(this, args)
+    }else {
+      return (...args1) => {
+        return curried.apply(this, args)
+      }
+    }
+  }
+}
+```
+
 
 
 ## 函数compose实现
