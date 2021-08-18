@@ -196,19 +196,27 @@ function cloneShadow(obj) {
 
 ```javascript
 function isObject(source) {
-  return Object.prototype.toString.call(source) === '[object Object]'
+  const type = typeof value;
+  return type != null && (type == 'object')
 }
 
 function deepClone(source, weak = new WeakMap()) {
-  if(!isObject(source)) return source
-  if(weak.has(source)) return weak.get(source)
+  
+  if(source == null) return source;
 
-  let target = Array.isArray(source) ? [] : {}
-  weak.set(source, target)
+  if(!isObject(source)) return source;
 
-  for(let key in source) {
-    if(Object.prototype.hasOwnProperty.call(source, key)) {
-      target[key] = isObject(source[key]) ? deepClone(source[key], weak) : source[key]
+  if(source instanceof RegExp) return new RegExp(source);
+
+  if(weakMap.has(source)) return weakMap.get(source);
+
+  const target = new source.constructor
+
+  weakMap.set(source, target)
+
+  for (const key in source) {
+    if (Object.hasOwnProperty.call(source, key)) {
+      target[key] = deepClone_self(source[key], weakMap)
     }
   }
   return target
@@ -300,9 +308,40 @@ function deepLoop(source) {
 
 ## new实现
 
+new 内部的执行过程：
+
+* 创建一个新对象
+* 给新对象执行 `原型` 连接（连接构造函数的原型）
+* 执行构造函数，新对象绑定构造函数中的this
+* 返回新对象（如果构造函数返回对象会覆盖整个新对象）
+
+```javascript
+const selfNew = () => {
+  const temp = Object();
+  const Con = Array.prototype.shift.call(arguments);
+  temp.__protp__ = Con.prototype;
+  const result = arguments.length ? Con.call(temp, arguments) : Con.call(temp)
+  return result instanceof Object ? result : temp 
+}
+```
+
 ## instanceof 实现
 
+instanceof 是判断左侧的实例的原型链上是否存在右侧构造函数的原型
 
+```javascript
+const seftInstaceof = (target, Fn) => {
+  const _proto_ = target.__proto__;
+  const prototype = Fn.prototype;
+  while(true) {
+    if(_proto_ == null) return false;
+    
+    if(_proto_ == prototype) return true;
+    
+    _proto_ = _proto_.__proto__
+  }
+}
+```
 
 ## Proxy数据绑定实现
 
