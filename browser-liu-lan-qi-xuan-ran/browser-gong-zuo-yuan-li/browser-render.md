@@ -138,7 +138,7 @@ DOM树是浏览器能够理解的数据结构，因此需要将HTML解析成DOM�
 
 DOM树的形式是**JavaScript对象**，因此可以用JS来修改节点的属性。
 
-DOM树是由**HTML 解析器**将HTML解析完成的。在[「HTML - 解析HTML文档」](../../html/parse-html.md)会详细说到如何将HTML解析成DOM树的。
+DOM树是由**HTML 解析器**将HTML解析完成的。在[「HTML - 解析HTML文档」](../../html/html-yu-fa/parse-html.md)会详细说到如何将HTML解析成DOM树的。
 
 在解析HTML的过程中，可能会加载一些图片、CSS或者JavaScript的子资源，但是为了提高速度，渲染引擎会提供**预加载扫描器，**让类似图片、CSS的这些资源并行加载。
 

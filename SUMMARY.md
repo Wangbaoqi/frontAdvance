@@ -4,15 +4,18 @@
 
 ## HTML、超文本标记语言 <a id="html"></a>
 
-* [HTML语法系列 - 编写HTML文档](html/edit-html.md)
-* [HTML语法系列 - 解析HTML文档](html/parse-html.md)
+* [HTML 语法](html/html-yu-fa/README.md)
+  * [HTML语法 - 解析HTML文档](html/html-yu-fa/parse-html.md)
+  * [HTML语法 - 编写HTML文档](html/html-yu-fa/edit-html.md)
 
 ## CSS、层叠样式表 <a id="css"></a>
 
-* [CSS语法机制](css/css-syntax.md)
-* [盒子模型](css/box-model.md)
-* [页面布局](css/page-layout.md)
-* [水平垂直居中](css/horizontal-vertical-center.md)
+* [CSS 语法](css/css-yu-fa/README.md)
+  * [CSS语法机制](css/css-yu-fa/css-syntax.md)
+* [CSS 基础](css/css-ji-chu/README.md)
+  * [水平垂直居中](css/css-ji-chu/horizontal-vertical-center.md)
+  * [页面布局](css/css-ji-chu/page-layout.md)
+  * [盒子模型](css/css-ji-chu/box-model.md)
 
 ## JavaScript、进阶修炼 <a id="javascript-advance"></a>
 
