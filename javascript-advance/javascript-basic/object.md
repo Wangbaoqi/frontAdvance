@@ -187,7 +187,7 @@ Object.entries(obj); // [['a', 0], ['b', '1'], ...]
 
 ### Object 拷贝
 
-Object的深浅拷贝可以转到 「[Interview 收集 - 谈谈深浅拷贝](../../source-code-yuan-ma/javascript-api/tan-tan-shen-qian-kao-bei.md)」
+Object的深浅拷贝可以转到 「[JavaScript实现篇 - 深浅拷贝](../../source-code-yuan-ma/javascript-api/tan-tan-applycallbind.md#shen-qian-kao-bei-shi-xian)」
 
 
 
