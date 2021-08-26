@@ -16,6 +16,7 @@
   * [水平垂直居中](css/css-ji-chu/horizontal-vertical-center.md)
   * [页面布局](css/css-ji-chu/page-layout.md)
   * [盒子模型](css/css-ji-chu/box-model.md)
+* [CSS 设计](css/css-she-ji.md)
 
 ## JavaScript、进阶修炼 <a id="javascript-advance"></a>
 
