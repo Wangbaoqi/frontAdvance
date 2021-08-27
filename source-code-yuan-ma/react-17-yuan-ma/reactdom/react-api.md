@@ -198,7 +198,7 @@ class PureComp extends PureComponent<Props,State> {
 
 ### React.memo
 
-React.memo 的使用详情可以到 [「React Family - React API」](../../../frame-react-and-vue/react-family/react-jsx.md#react-memo)查看。这里着重看下源码
+React.memo 的使用详情可以到 [「React Family - React API」](../../../frame-react-and-vue/react-family/react-jsx/#react-memo)查看。这里着重看下源码
 
 ```javascript
 function memo<Props>(
@@ -273,7 +273,7 @@ function createRef(): RefObject {
 }
 ```
 
-在[「React Family - React API  React.createRef」](../../../frame-react-and-vue/react-family/react-jsx.md#react-createref)中提到了Refs的执行时机
+在[「React Family - React API  React.createRef」](../../../frame-react-and-vue/react-family/react-jsx/#react-createref)中提到了Refs的执行时机
 
 ref在定义之后，是直接绑定到组件的实例上的，这个绑定的过程是在组件挂载的时候，那什么时候将DOM元素或者React元素绑定到Ref上呢？
 

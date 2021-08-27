@@ -12,7 +12,7 @@ React 中导出了很多的API，这里对这些API结合例子来进行学习
 
 React.Component 是定义组件的基类，通过使用ES6语法来继承它来创建子组件。
 
-有关 React.Component 的源码可以到[「React17 源码 - React API」](../../source-code-yuan-ma/react-17-yuan-ma/reactdom/react-api.md#component-he-purecomponent)查看。
+有关 React.Component 的源码可以到[「React17 源码 - React API」](../../../source-code-yuan-ma/react-17-yuan-ma/reactdom/react-api.md#component-he-purecomponent)查看。
 
 有关 React.Component 的详细使用可以到 [「React 官网」](https://zh-hans.reactjs.org/docs/react-component.html) 查看
 
@@ -114,13 +114,13 @@ class ClassCom extends React.Component<Props, State> {
 
 ### React.pureComponent
 
-React.pureComponent 是纯组件，用法上跟React.Component基本一致，但是两个还是有一点细微的差别，在 shouldComponentUpdate 上的区别以及源码解析，详情可以到「[react 源码 - react API」](../../source-code-yuan-ma/react-17-yuan-ma/reactdom/react-api.md#component-he-purecomponent)查看.
+React.pureComponent 是纯组件，用法上跟React.Component基本一致，但是两个还是有一点细微的差别，在 shouldComponentUpdate 上的区别以及源码解析，详情可以到「[react 源码 - react API」](../../../source-code-yuan-ma/react-17-yuan-ma/reactdom/react-api.md#component-he-purecomponent)查看.
 
 ### React.memo
 
 React.memo 是高阶组件，接收两个参数 `type（React元素）`，`compare` - 新老props对比函数。
 
-关于React.memo的底层实现原理可以到[「react 源码 - React API」](../../source-code-yuan-ma/react-17-yuan-ma/reactdom/react-api.md#react-memo)查看。
+关于React.memo的底层实现原理可以到[「react 源码 - React API」](../../../source-code-yuan-ma/react-17-yuan-ma/reactdom/react-api.md#react-memo)查看。
 
 ```typescript
 const MyComponnet = React.memo(
@@ -194,11 +194,11 @@ refs 提供了一种方式，可以访问DOM节点或者React元素。
 
 #### refs的使用方式
 
-![](../../.gitbook/assets/refs.png)
+![](../../../.gitbook/assets/refs.png)
 
 #### refs的执行时机
 
-在组件挂载时，给`current`属性传入DOM元素或者react元素（若是回调refs，会调用ref的callback函数并传入DOM元素，当卸载时传入`null`），当卸载时，给`current`传入null ，详细的请看 「[React源码 -  React API」](../../source-code-yuan-ma/react-17-yuan-ma/reactdom/react-api.md#react-createref)
+在组件挂载时，给`current`属性传入DOM元素或者react元素（若是回调refs，会调用ref的callback函数并传入DOM元素，当卸载时传入`null`），当卸载时，给`current`传入null ，详细的请看 「[React源码 -  React API」](../../../source-code-yuan-ma/react-17-yuan-ma/reactdom/react-api.md#react-createref)
 
 #### 创建Refs
 
@@ -303,7 +303,7 @@ class App extends React.Component {
 
 ### React.forwardRef
 
-Ref 的转发也是一种将ref传递到子组件的技巧。这在可重用的组件库中是很有用的。关于源码请到「[React 源码 - React API 」](../../source-code-yuan-ma/react-17-yuan-ma/reactdom/react-api.md#react-forwardref)
+Ref 的转发也是一种将ref传递到子组件的技巧。这在可重用的组件库中是很有用的。关于源码请到「[React 源码 - React API 」](../../../source-code-yuan-ma/react-17-yuan-ma/reactdom/react-api.md#react-forwardref)
 
 ```typescript
 const FancyButton = () => {

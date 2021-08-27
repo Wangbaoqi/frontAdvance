@@ -1,4 +1,4 @@
-# react - redux
+# React - Redux
 
 **这一节会在上一节的基础上加上专门适用于React的状态管理 -- redux + context = react-redux**
 

@@ -1,4 +1,4 @@
-# react  - component
+# React Component
 
 ### 理解React组件
 
